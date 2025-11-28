@@ -553,8 +553,19 @@ def generate(
                 job_id = persona.get("job_id")
                 occupation_doc = get_occupation_by_id(job_id) if job_id else None
                 
-                # Generate complete CV
-                cv_doc = generate_complete_cv(persona)
+                # Generate complete CV (with quality check)
+                cv_doc, quality_report = generate_complete_cv(persona)
+                
+                # Check if CV generation failed due to quality
+                if cv_doc is None:
+                    stats["total_failed_quality"] += 1
+                    if verbose:
+                        issues = quality_report.get('issues', [])[:3] if quality_report else []
+                        console.print(f"[yellow]CV generation failed quality check for {current_name}: {issues}[/yellow]")
+                    continue
+                
+                # Get quality score from report
+                quality_score = quality_report.get("scores", {}).get("overall", 100.0) if quality_report else 100.0
                 
                 # Override language if specified
                 if language:
@@ -597,87 +608,13 @@ def generate(
                             if verbose:
                                 console.print(f"[yellow]Timeline validation warning for {current_name}: {e}[/yellow]")
                 
-                # Validate quality
-                quality_passed = True
-                quality_score = 100.0
-                retry_count = 0
-                max_retries = 3 if retry_failed else 0
+                # Check quality score threshold (already validated in generate_complete_cv, but check min_score)
+                quality_passed = quality_score >= min_quality_score
                 
-                while retry_count <= max_retries:
-                    if validate_quality:
-                        try:
-                            passed, quality_report = validate_cv_quality(
-                                cv_doc,
-                                min_score=min_quality_score,
-                                save_report=verbose,
-                                report_path=industry_dir / f"{filename_base}_validation.json" if verbose else None
-                            )
-                            
-                            quality_passed = passed
-                            quality_score = quality_report.score.overall
-                            
-                            if not passed:
-                                stats["total_failed_quality"] += 1
-                                
-                                if retry_count < max_retries:
-                                    stats["total_retried"] += 1
-                                    retry_count += 1
-                                    if verbose:
-                                        console.print(f"[yellow]Quality validation failed for {current_name} (score: {quality_score:.1f}), retrying ({retry_count}/{max_retries})...[/yellow]")
-                                    
-                                    # Re-generate persona and CV
-                                    persona = engine.sample_persona(
-                                        preferred_canton=None,
-                                        preferred_industry=industry
-                                    )
-                                    
-                                    if not filter_persona(persona, None, career_level, age_group, language):
-                                        continue
-                                    
-                                    cv_doc = generate_complete_cv(persona)
-                                    if language:
-                                        cv_doc.language = language
-                                    if not with_portrait:
-                                        cv_doc.portrait_path = None
-                                        cv_doc.portrait_base64 = None
-                                    
-                                    # Re-validate timeline
-                                    if validate_timeline:
-                                        validated_education, validated_jobs, _ = validate_cv_timeline(
-                                            persona,
-                                            cv_doc.education,
-                                            cv_doc.jobs,
-                                            auto_fix=True,
-                                            strict=False
-                                        )
-                                        cv_doc.education = validated_education
-                                        cv_doc.jobs = validated_jobs
-                                    
-                                    continue
-                                else:
-                                    if verbose:
-                                        console.print(f"[red]Quality validation failed for {current_name} after {max_retries} retries (score: {quality_score:.1f})[/red]")
-                                    break
-                            else:
-                                # Passed, break retry loop
-                                break
-                        
-                        except Exception as e:
-                            if strict:
-                                console.print(f"[red]Quality validation error for {current_name}: {e}[/red]")
-                                quality_passed = False
-                                break
-                            else:
-                                if verbose:
-                                    console.print(f"[yellow]Quality validation warning for {current_name}: {e}[/yellow]")
-                                # Continue with export even if validation fails in non-strict mode
-                                break
-                    else:
-                        # Quality validation disabled
-                        break
-                
-                # Skip export if quality validation failed
-                if validate_quality and not quality_passed:
+                if not quality_passed:
+                    stats["total_failed_quality"] += 1
+                    if verbose:
+                        console.print(f"[yellow]Quality score below threshold for {current_name}: {quality_score:.1f} < {min_quality_score}[/yellow]")
                     continue
                 
                 # Generate filename
