@@ -2,24 +2,29 @@
 CV Timeline Validator.
 
 This module validates and fixes CV timeline consistency:
-- Education and job history alignment with persona age
-- No overlapping job periods
-- No unexplained gaps > 12 months
-- Logical career progression
-- Realistic age/experience/career_level relationships
+- FORWARD timeline calculation (never backwards from future dates)
+- Strict validation rules (start < end, end ≤ TODAY, no overlaps)
+- Gap handling (0-6 months: none, 6-12: Weiterbildung/Freelance, 12-24: Elternzeit, >24: REJECT)
+- Remove "Verschiedene Positionen" entries
+- Current date awareness (CURRENT_DATE = 2024-11-28)
 
-Run: Used by CV generation pipeline
+Run: Used by CV generation pipeline BEFORE job generation
 """
 import sys
 import random
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
-from datetime import datetime
+from datetime import datetime, date
 from dataclasses import dataclass
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
+
+# CURRENT DATE AWARENESS - dynamically calculated
+CURRENT_DATE = date.today()
+CURRENT_YEAR = CURRENT_DATE.year
+CURRENT_MONTH = CURRENT_DATE.month
 
 
 @dataclass
@@ -73,12 +78,310 @@ def year_to_date_string(year: int, month: int = 1) -> str:
     Returns:
         Date string in format "YYYY-MM".
     """
+    # Validate month
+    if month < 1 or month > 12:
+        month = 1
     return f"{year}-{month:02d}"
+
+
+def parse_date_string(date_str: str) -> Tuple[Optional[int], Optional[int]]:
+    """
+    Parse date string (YYYY-MM) to year and month.
+    
+    Args:
+        date_str: Date string in format "YYYY-MM".
+    
+    Returns:
+        Tuple of (year, month) or (None, None) if invalid.
+    """
+    if not date_str:
+        return None, None
+    
+    try:
+        if "-" in date_str:
+            parts = date_str.split("-")
+            year = int(parts[0])
+            month = int(parts[1]) if len(parts) > 1 else 1
+            # Validate month
+            if month < 1 or month > 12:
+                return None, None
+            return year, month
+        else:
+            return int(date_str), 1
+    except (ValueError, AttributeError):
+        return None, None
+
+
+def validate_date_string(date_str: str) -> bool:
+    """
+    Validate date string format and values.
+    
+    Args:
+        date_str: Date string in format "YYYY-MM".
+    
+    Returns:
+        True if valid, False otherwise.
+    """
+    year, month = parse_date_string(date_str)
+    if year is None or month is None:
+        return False
+    if year < 1950 or year > CURRENT_YEAR:
+        return False
+    return True
+
+
+def compare_dates(date1_str: str, date2_str: str) -> int:
+    """
+    Compare two date strings.
+    
+    Args:
+        date1_str: First date string (YYYY-MM).
+        date2_str: Second date string (YYYY-MM).
+    
+    Returns:
+        -1 if date1 < date2, 0 if equal, 1 if date1 > date2.
+    """
+    year1, month1 = parse_date_string(date1_str)
+    year2, month2 = parse_date_string(date2_str)
+    
+    if year1 is None or year2 is None:
+        return 0
+    
+    if year1 < year2:
+        return -1
+    elif year1 > year2:
+        return 1
+    elif month1 < month2:
+        return -1
+    elif month1 > month2:
+        return 1
+    return 0
+
+
+def calculate_timeline_forward(
+    persona_age: int,
+    years_experience: int,
+    education_start_year: int,
+    education_duration_years: int,
+    bildungstyp: str = ""
+) -> Tuple[List[Dict[str, Any]], List[TimelineIssue]]:
+    """
+    Calculate timeline FORWARD from education start to current date.
+    
+    CRITICAL: NEVER calculate backwards from future dates.
+    
+    Args:
+        persona_age: Persona's current age.
+        years_experience: Total years of work experience.
+        education_start_year: Year when education started (age 15-22 based on bildungstyp).
+        education_duration_years: Duration of education in years.
+        bildungstyp: Type of education (EFZ, EBA, etc.).
+    
+    Returns:
+        Tuple of (job_periods, validation_issues).
+        If validation fails, returns empty list and issues.
+    """
+    issues = []
+    periods = []
+    
+    # Step 1: Calculate education end
+    education_end_year = education_start_year + education_duration_years
+    education_end_month = random.randint(1, 6)  # End in first half of year
+    
+    # Validate education end ≤ CURRENT_DATE
+    if education_end_year > CURRENT_YEAR or (education_end_year == CURRENT_YEAR and education_end_month > CURRENT_MONTH):
+        issues.append(TimelineIssue(
+            severity="error",
+            category="age",
+            message=f"Education end ({education_end_year}-{education_end_month:02d}) is in the future",
+            affected_periods=[],
+            suggested_fix="Adjust education_start_year to be earlier"
+        ))
+        return [], issues
+    
+    # Step 2: First job starts: education_end + 0 to 6 months
+    gap_months = random.randint(0, 6)
+    first_job_start_year = education_end_year
+    first_job_start_month = education_end_month + gap_months
+    if first_job_start_month > 12:
+        first_job_start_month -= 12
+        first_job_start_year += 1
+    
+    # Validate first job start ≤ CURRENT_DATE
+    if first_job_start_year > CURRENT_YEAR or (first_job_start_year == CURRENT_YEAR and first_job_start_month > CURRENT_MONTH):
+        issues.append(TimelineIssue(
+            severity="error",
+            category="age",
+            message=f"First job start ({first_job_start_year}-{first_job_start_month:02d}) is in the future",
+            affected_periods=[],
+            suggested_fix="Adjust education timeline"
+        ))
+        return [], issues
+    
+    # Step 3: Calculate number of jobs
+    if years_experience <= 2:
+        num_jobs = 1
+    elif years_experience <= 6:
+        num_jobs = 2
+    elif years_experience <= 11:
+        num_jobs = 3
+    else:
+        num_jobs = 4
+    
+    # Step 4: Calculate each job period FORWARD
+    current_start_year = first_job_start_year
+    current_start_month = first_job_start_month
+    remaining_years = years_experience
+    elternzeit_used = False
+    
+    for job_num in range(num_jobs):
+        is_current = (job_num == num_jobs - 1)  # Last job is current
+        
+        # Calculate job duration
+        if is_current:
+            # Current job: use remaining years
+            duration_years = max(1, min(remaining_years, 5))
+            duration_months = random.randint(0, 11)
+        else:
+            # Previous jobs: 2-4 years
+            max_duration = int(min(4, max(2, remaining_years - 1)))  # Leave at least 1 year for current
+            if max_duration < 2:
+                duration_years = 1
+            else:
+                duration_years = random.randint(2, max_duration)
+            duration_months = random.randint(0, 11)
+        
+        # Calculate job end
+        job_end_year = current_start_year
+        job_end_month = current_start_month + duration_months
+        if job_end_month > 12:
+            job_end_month -= 12
+            job_end_year += 1
+        job_end_year += duration_years
+        
+        # For current job, end is CURRENT_DATE
+        if is_current:
+            job_end_year = CURRENT_YEAR
+            job_end_month = CURRENT_MONTH
+        
+        # STRICT VALIDATION: start_date < end_date
+        if not is_current:
+            if job_end_year < current_start_year or (job_end_year == current_start_year and job_end_month <= current_start_month):
+                issues.append(TimelineIssue(
+                    severity="error",
+                    category="duration",
+                    message=f"Job {job_num + 1}: start ({current_start_year}-{current_start_month:02d}) >= end ({job_end_year}-{job_end_month:02d})",
+                    affected_periods=[(current_start_year, job_end_year)],
+                    suggested_fix="REJECT timeline, regenerate with different durations"
+                ))
+                return [], issues
+        
+        # STRICT VALIDATION: end_date ≤ CURRENT_DATE
+        if job_end_year > CURRENT_YEAR or (job_end_year == CURRENT_YEAR and job_end_month > CURRENT_MONTH):
+            issues.append(TimelineIssue(
+                severity="error",
+                category="age",
+                message=f"Job {job_num + 1}: end date ({job_end_year}-{job_end_month:02d}) is in the future",
+                affected_periods=[],
+                suggested_fix="REJECT timeline, regenerate"
+            ))
+            return [], issues
+        
+        periods.append({
+            "start_year": current_start_year,
+            "start_month": current_start_month,
+            "end_year": job_end_year if not is_current else None,
+            "end_month": job_end_month if not is_current else None,
+            "duration_years": duration_years,
+            "duration_months": duration_months,
+            "is_current": is_current
+        })
+        
+        remaining_years -= (duration_years + duration_months / 12.0)
+        
+        # Calculate gap before next job
+        if not is_current:
+            next_start_year = job_end_year
+            next_start_month = job_end_month + random.randint(0, 12)  # 0-12 months gap
+            if next_start_month > 12:
+                next_start_month -= 12
+                next_start_year += 1
+            
+            # Check gap size
+            gap_months = (next_start_year - job_end_year) * 12 + (next_start_month - job_end_month)
+            
+            # Gap handling rules
+            if gap_months > 24:
+                # REJECT: gap too large
+                issues.append(TimelineIssue(
+                    severity="error",
+                    category="gap",
+                    message=f"Gap between job {job_num + 1} and {job_num + 2}: {gap_months} months (>24 months)",
+                    affected_periods=[(job_end_year, next_start_year)],
+                    suggested_fix="REJECT timeline, recalculate with fewer/longer jobs"
+                ))
+                return [], issues
+            elif gap_months > 12:
+                # 12-24 months: Elternzeit (max 1 per CV)
+                if not elternzeit_used:
+                    gap_type = "elternzeit"
+                    elternzeit_used = True
+                else:
+                    # Already used Elternzeit, use Sabbatical
+                    gap_type = "sabbatical"
+            elif gap_months > 6:
+                # 6-12 months: Weiterbildung or Freelance
+                gap_type = random.choice(["weiterbildung", "freelance"])
+            else:
+                # 0-6 months: no gap filler needed
+                gap_type = None
+            
+            if gap_type:
+                # Insert gap filler
+                periods.append({
+                    "start_year": job_end_year,
+                    "start_month": job_end_month,
+                    "end_year": next_start_year,
+                    "end_month": next_start_month,
+                    "duration_years": gap_months // 12,
+                    "duration_months": gap_months % 12,
+                    "is_current": False,
+                    "is_gap": True,
+                    "gap_type": gap_type
+                })
+            
+            current_start_year = next_start_year
+            current_start_month = next_start_month
+    
+    # Final validation: check all transitions
+    for i in range(len(periods) - 1):
+        period1 = periods[i]
+        period2 = periods[i + 1]
+        
+        end1_year = period1.get("end_year") or CURRENT_YEAR
+        end1_month = period1.get("end_month") or CURRENT_MONTH
+        start2_year = period2.get("start_year")
+        start2_month = period2.get("start_month")
+        
+        # STRICT VALIDATION: next_job_start ≥ previous_job_end (no overlaps)
+        if start2_year < end1_year or (start2_year == end1_year and start2_month < end1_month):
+            issues.append(TimelineIssue(
+                severity="error",
+                category="overlap",
+                message=f"Overlap: period {i+1} ends ({end1_year}-{end1_month:02d}) > period {i+2} starts ({start2_year}-{start2_month:02d})",
+                affected_periods=[(end1_year, start2_year)],
+                suggested_fix="REJECT timeline, regenerate"
+            ))
+            return [], issues
+    
+    return periods, issues
 
 
 def calculate_total_job_years(job_history: List[Dict[str, Any]]) -> float:
     """
     Calculate total years of work experience from job history.
+    
+    Uses CURRENT_DATE for current date awareness.
     
     Args:
         job_history: List of job entries.
@@ -87,8 +390,8 @@ def calculate_total_job_years(job_history: List[Dict[str, Any]]) -> float:
         Total years as float.
     """
     total_years = 0.0
-    current_year = datetime.now().year
-    current_month = datetime.now().month
+    current_year = CURRENT_YEAR
+    current_month = CURRENT_MONTH
     
     for job in job_history:
         start_date = job.get("start_date")
@@ -132,7 +435,9 @@ def calculate_total_job_years(job_history: List[Dict[str, Any]]) -> float:
 
 def check_job_overlaps(job_history: List[Dict[str, Any]]) -> List[TimelineIssue]:
     """
-    Check for overlapping job periods.
+    Check for overlapping job periods with STRICT validation.
+    
+    STRICT RULE: next_job_start ≥ previous_job_end (no overlaps, no exceptions).
     
     Args:
         job_history: List of job entries.
@@ -141,7 +446,6 @@ def check_job_overlaps(job_history: List[Dict[str, Any]]) -> List[TimelineIssue]
         List of overlap issues.
     """
     issues = []
-    current_year = datetime.now().year
     
     # Sort jobs by start date
     sorted_jobs = sorted(
@@ -153,26 +457,46 @@ def check_job_overlaps(job_history: List[Dict[str, Any]]) -> List[TimelineIssue]
         job1 = sorted_jobs[i]
         job2 = sorted_jobs[i + 1]
         
-        start1 = parse_date_to_year(job1.get("start_date"))
-        end1 = parse_date_to_year(job2.get("end_date")) if not job1.get("is_current") else current_year
+        start1_year, start1_month = parse_date_string(job1.get("start_date", ""))
+        end1_year, end1_month = parse_date_string(job1.get("end_date", ""))
+        if job1.get("is_current") or not end1_year:
+            end1_year, end1_month = CURRENT_YEAR, CURRENT_MONTH
         
-        start2 = parse_date_to_year(job2.get("start_date"))
-        end2 = parse_date_to_year(job2.get("end_date")) if not job2.get("is_current") else current_year
+        start2_year, start2_month = parse_date_string(job2.get("start_date", ""))
         
-        if not all([start1, start2]):
+        if not all([start1_year, start2_year]):
             continue
         
-        # Check overlap
-        if end1 and start2 and end1 > start2:
-            overlap_start = start2
-            overlap_end = min(end1, end2) if end2 else end1
-            
+        # STRICT VALIDATION: start_date < end_date (ALWAYS)
+        if end1_year and (end1_year < start1_year or (end1_year == start1_year and end1_month <= start1_month)):
             issues.append(TimelineIssue(
                 severity="error",
                 category="overlap",
-                message=f"Job overlap: {job1.get('company')} ({start1}-{end1}) overlaps with {job2.get('company')} ({start2}-{end2})",
-                affected_periods=[(overlap_start, overlap_end)],
-                suggested_fix=f"Adjust end date of {job1.get('company')} to {start2 - 1} or start date of {job2.get('company')} to {end1 + 1}"
+                message=f"Job {job1.get('company')}: start ({start1_year}-{start1_month:02d}) >= end ({end1_year}-{end1_month:02d})",
+                affected_periods=[(start1_year, end1_year)],
+                suggested_fix="REJECT timeline, regenerate"
+            ))
+            continue
+        
+        # STRICT VALIDATION: end_date ≤ CURRENT_DATE
+        if end1_year > CURRENT_YEAR or (end1_year == CURRENT_YEAR and end1_month > CURRENT_MONTH):
+            issues.append(TimelineIssue(
+                severity="error",
+                category="age",
+                message=f"Job {job1.get('company')}: end date ({end1_year}-{end1_month:02d}) is in the future",
+                affected_periods=[],
+                suggested_fix="REJECT timeline, regenerate"
+            ))
+            continue
+        
+        # STRICT VALIDATION: next_job_start ≥ previous_job_end (no overlaps)
+        if start2_year < end1_year or (start2_year == end1_year and start2_month < end1_month):
+            issues.append(TimelineIssue(
+                severity="error",
+                category="overlap",
+                message=f"Overlap: {job1.get('company')} ends ({end1_year}-{end1_month:02d}) > {job2.get('company')} starts ({start2_year}-{start2_month:02d})",
+                affected_periods=[(end1_year, start2_year)],
+                suggested_fix="REJECT timeline, regenerate"
             ))
     
     return issues
@@ -195,7 +519,7 @@ def check_gaps(
         List of gap issues.
     """
     issues = []
-    current_year = datetime.now().year
+    current_year = CURRENT_YEAR
     
     # Get education end year
     education_end = None
@@ -332,7 +656,7 @@ def check_age_consistency(
         List of age consistency issues.
     """
     issues = []
-    current_year = datetime.now().year
+    current_year = CURRENT_YEAR
     
     # Rule 1: Min age for career level
     min_ages = {
@@ -397,7 +721,7 @@ def check_job_durations(job_history: List[Dict[str, Any]]) -> List[TimelineIssue
         List of duration issues.
     """
     issues = []
-    current_year = datetime.now().year
+    current_year = CURRENT_YEAR
     
     for job in job_history:
         start_date = job.get("start_date")
@@ -451,7 +775,7 @@ def auto_fix_overlaps(job_history: List[Dict[str, Any]]) -> List[Dict[str, Any]]
         Fixed job history.
     """
     fixed = []
-    current_year = datetime.now().year
+    current_year = CURRENT_YEAR
     
     # Sort jobs by start date
     sorted_jobs = sorted(
@@ -487,16 +811,23 @@ def auto_fix_overlaps(job_history: List[Dict[str, Any]]) -> List[Dict[str, Any]]
 
 def insert_gap_filler(
     start_year: int,
+    start_month: int,
     end_year: int,
+    end_month: int,
     gap_type: str = "auto"
 ) -> Dict[str, Any]:
     """
     Insert a gap filler entry.
     
+    REMOVE "Verschiedene Positionen" - NEVER use as job title.
+    Replace with: "Weiterbildung", "Elternzeit", "Sabbatical".
+    
     Args:
         start_year: Gap start year.
+        start_month: Gap start month.
         end_year: Gap end year.
-        gap_type: Type of gap ("elternzeit", "sabbatical", "freelance", "auto").
+        end_month: Gap end month.
+        gap_type: Type of gap ("elternzeit", "sabbatical", "weiterbildung", "freelance", "auto").
     
     Returns:
         Gap filler job entry.
@@ -508,9 +839,14 @@ def insert_gap_filler(
             "it": "Congedo parentale"
         },
         "sabbatical": {
-            "de": "Sabbatical / Weiterbildung",
-            "fr": "Sabbatique / Formation continue",
-            "it": "Sabbatico / Formazione continua"
+            "de": "Sabbatical",
+            "fr": "Sabbatique",
+            "it": "Sabbatico"
+        },
+        "weiterbildung": {
+            "de": "Weiterbildung",
+            "fr": "Formation continue",
+            "it": "Formazione continua"
         },
         "freelance": {
             "de": "Freelance Projekte",
@@ -521,11 +857,11 @@ def insert_gap_filler(
     
     if gap_type == "auto":
         # Choose based on gap duration
-        duration = end_year - start_year
-        if duration >= 2:
+        gap_months = (end_year - start_year) * 12 + (end_month - start_month)
+        if gap_months >= 12:
             gap_type = "elternzeit"
-        elif duration >= 1:
-            gap_type = "sabbatical"
+        elif gap_months >= 6:
+            gap_type = random.choice(["weiterbildung", "sabbatical"])
         else:
             gap_type = "freelance"
     
@@ -535,8 +871,8 @@ def insert_gap_filler(
         "company": filler_name,
         "position": filler_name,
         "location": "",
-        "start_date": year_to_date_string(start_year, 1),
-        "end_date": year_to_date_string(end_year - 1, 12),
+        "start_date": year_to_date_string(start_year, start_month),
+        "end_date": year_to_date_string(end_year, end_month),
         "is_current": False,
         "responsibilities": [],
         "technologies": [],
@@ -552,6 +888,14 @@ def auto_fix_gaps(
     """
     Auto-fix gaps by inserting gap fillers.
     
+    Gap handling rules:
+    - 0-6 months: no explanation needed
+    - 6-12 months: "Weiterbildung" or "Freelance"
+    - 12-24 months: "Elternzeit" (max 1 per CV)
+    - >24 months: REJECT timeline, recalculate
+    
+    REMOVE "Verschiedene Positionen" entries - replace with specific gap types.
+    
     Args:
         education_history: List of education entries.
         job_history: List of job entries.
@@ -561,28 +905,53 @@ def auto_fix_gaps(
         Tuple of (fixed_education_history, fixed_job_history).
     """
     fixed_jobs = []
-    current_year = datetime.now().year
+    elternzeit_used = False
     
     # Get education end
-    education_end = None
+    education_end_year = None
+    education_end_month = None
     if education_history:
-        education_end = max([e.get("end_year", 0) for e in education_history])
+        max_entry = max(education_history, key=lambda e: e.get("end_year", 0))
+        education_end_year = max_entry.get("end_year")
+        education_end_month = max_entry.get("end_month", 6)
     
-    # Sort jobs by start date (excluding gap fillers)
-    real_jobs = [j for j in job_history if j.get("category") != "gap_filler"]
+    # Sort jobs by start date (excluding gap fillers and "Verschiedene Positionen")
+    real_jobs = [
+        j for j in job_history 
+        if j.get("category") != "gap_filler" 
+        and "Verschiedene Positionen" not in j.get("company", "")
+        and "Verschiedene Positionen" not in j.get("position", "")
+    ]
     sorted_jobs = sorted(
         real_jobs,
         key=lambda j: parse_date_to_year(j.get("start_date", "2000-01")) or 2000
     )
     
     # Check gap between education and first job
-    if education_end and sorted_jobs:
-        first_job_start = parse_date_to_year(sorted_jobs[0].get("start_date"))
-        if first_job_start:
-            gap_years = first_job_start - education_end
-            if gap_years > 0 and gap_years * 12 > max_gap_months:
-                # Insert gap filler
-                filler = insert_gap_filler(education_end, first_job_start)
+    if education_end_year and sorted_jobs:
+        first_job_start_year, first_job_start_month = parse_date_string(sorted_jobs[0].get("start_date", ""))
+        if first_job_start_year:
+            gap_months = (first_job_start_year - education_end_year) * 12 + (first_job_start_month - (education_end_month or 6))
+            if gap_months > 24:
+                # REJECT: gap too large
+                return education_history, []
+            elif gap_months > 12:
+                if not elternzeit_used:
+                    gap_type = "elternzeit"
+                    elternzeit_used = True
+                else:
+                    gap_type = "sabbatical"
+            elif gap_months > 6:
+                gap_type = random.choice(["weiterbildung", "freelance"])
+            else:
+                gap_type = None
+            
+            if gap_type:
+                filler = insert_gap_filler(
+                    education_end_year, education_end_month or 6,
+                    first_job_start_year, first_job_start_month,
+                    gap_type
+                )
                 fixed_jobs.append(filler)
     
     # Check gaps between jobs
@@ -592,18 +961,35 @@ def auto_fix_gaps(
         if i < len(sorted_jobs) - 1:
             next_job = sorted_jobs[i + 1]
             
-            end = parse_date_to_year(job.get("end_date")) if not job.get("is_current") else current_year
-            start = parse_date_to_year(next_job.get("start_date"))
+            end_year, end_month = parse_date_string(job.get("end_date", ""))
+            if job.get("is_current") or not end_year:
+                end_year, end_month = CURRENT_YEAR, CURRENT_MONTH
             
-            if end and start:
-                gap_years = start - end
-                if gap_years > 0 and gap_years * 12 > max_gap_months:
-                    # Insert gap filler (ensure no overlap)
-                    filler_start = end + 1
-                    filler_end = start - 1
-                    if filler_start < filler_end:
-                        filler = insert_gap_filler(filler_start, filler_end + 1)
-                        fixed_jobs.append(filler)
+            start_year, start_month = parse_date_string(next_job.get("start_date", ""))
+            
+            if end_year and start_year:
+                gap_months = (start_year - end_year) * 12 + (start_month - end_month)
+                if gap_months > 24:
+                    # REJECT: gap too large
+                    return education_history, []
+                elif gap_months > 12:
+                    if not elternzeit_used:
+                        gap_type = "elternzeit"
+                        elternzeit_used = True
+                    else:
+                        gap_type = "sabbatical"
+                elif gap_months > 6:
+                    gap_type = random.choice(["weiterbildung", "freelance"])
+                else:
+                    gap_type = None
+                
+                if gap_type:
+                    filler = insert_gap_filler(
+                        end_year, end_month,
+                        start_year, start_month,
+                        gap_type
+                    )
+                    fixed_jobs.append(filler)
     
     # Re-sort all jobs (including gap fillers) by start date
     fixed_jobs = sorted(
@@ -634,7 +1020,7 @@ def adjust_dates_minor(
     Returns:
         Tuple of (adjusted_education_history, adjusted_job_history).
     """
-    current_year = datetime.now().year
+    current_year = CURRENT_YEAR
     
     # Adjust education end to align with work start
     if education_history and job_history:
@@ -674,17 +1060,26 @@ def validate_cv_timeline(
     education_history: List[Dict[str, Any]],
     job_history: List[Dict[str, Any]],
     auto_fix: bool = True,
-    strict: bool = False
+    strict: bool = True
 ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[TimelineIssue]]:
     """
-    Validate and fix CV timeline consistency.
+    Validate and fix CV timeline consistency with STRICT validation rules.
+    
+    Run BEFORE any job generation, fail fast if timeline invalid.
+    
+    STRICT VALIDATION RULES:
+    - start_date < end_date (ALWAYS, no exceptions)
+    - end_date ≤ CURRENT_DATE (no future jobs)
+    - next_job_start ≥ previous_job_end (no overlaps)
+    - All dates in format YYYY-MM, validate month 01-12
+    - If ANY validation fails: REJECT timeline, regenerate
     
     Args:
         persona: Persona dictionary with age, years_experience, career_level.
         education_history: List of education entries.
         job_history: List of job entries.
         auto_fix: Whether to automatically fix issues.
-        strict: Whether to raise ValidationError on critical issues.
+        strict: Whether to raise ValidationError on critical issues (default: True for forward calculation).
     
     Returns:
         Tuple of (validated_education_history, validated_job_history, issues).
@@ -698,16 +1093,46 @@ def validate_cv_timeline(
     years_experience = persona.get("years_experience", 0)
     career_level = persona.get("career_level", "mid")
     
+    # Remove "Verschiedene Positionen" entries from job_history
+    cleaned_job_history = [
+        j for j in job_history
+        if "Verschiedene Positionen" not in j.get("company", "")
+        and "Verschiedene Positionen" not in j.get("position", "")
+    ]
+    
+    # Validate all date strings
+    for job in cleaned_job_history:
+        start_date = job.get("start_date", "")
+        end_date = job.get("end_date", "")
+        
+        if not validate_date_string(start_date):
+            issues.append(TimelineIssue(
+                severity="error",
+                category="format",
+                message=f"Invalid start_date format: {start_date}",
+                affected_periods=[],
+                suggested_fix="REJECT timeline, regenerate"
+            ))
+        
+        if end_date and not validate_date_string(end_date):
+            issues.append(TimelineIssue(
+                severity="error",
+                category="format",
+                message=f"Invalid end_date format: {end_date}",
+                affected_periods=[],
+                suggested_fix="REJECT timeline, regenerate"
+            ))
+    
     # Run all validations
-    issues.extend(check_job_overlaps(job_history))
-    issues.extend(check_gaps(education_history, job_history))
-    issues.extend(check_career_progression(job_history))
-    issues.extend(check_age_consistency(persona_age, years_experience, education_history, job_history, career_level))
-    issues.extend(check_job_durations(job_history))
+    issues.extend(check_job_overlaps(cleaned_job_history))
+    issues.extend(check_gaps(education_history, cleaned_job_history))
+    issues.extend(check_career_progression(cleaned_job_history))
+    issues.extend(check_age_consistency(persona_age, years_experience, education_history, cleaned_job_history, career_level))
+    issues.extend(check_job_durations(cleaned_job_history))
     
     # Auto-fix if enabled
     fixed_education = education_history.copy()
-    fixed_jobs = job_history.copy()
+    fixed_jobs = cleaned_job_history.copy()
     
     if auto_fix:
         # Fix overlaps
@@ -715,7 +1140,7 @@ def validate_cv_timeline(
         if overlap_issues:
             fixed_jobs = auto_fix_overlaps(fixed_jobs)
         
-        # Fix gaps
+        # Fix gaps (with strict rules)
         gap_issues = [i for i in issues if i.category == "gap"]
         if gap_issues:
             fixed_education, fixed_jobs = auto_fix_gaps(fixed_education, fixed_jobs)
@@ -766,7 +1191,7 @@ def get_timeline_summary(
     Returns:
         Summary dictionary.
     """
-    current_year = datetime.now().year
+    current_year = CURRENT_YEAR
     
     education_end = None
     if education_history:

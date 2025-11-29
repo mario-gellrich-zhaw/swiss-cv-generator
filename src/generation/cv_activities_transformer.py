@@ -18,30 +18,146 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from src.database.queries import get_activities_by_occupation, get_occupation_by_id
+from src.generation.metrics_validator import (
+    validate_bullet_metrics,
+    validate_job_metric_consistency,
+    enhance_achievement_prompt,
+    get_metric_range_prompt
+)
 from src.config import get_settings
+from src.generation.openai_client import (
+    get_openai_client,
+    is_openai_available,
+    call_openai_chat
+)
 
 settings = get_settings()
 
-# OpenAI client setup
-OPENAI_AVAILABLE = False
-_openai_client = None
+# Use centralized OpenAI client
+OPENAI_AVAILABLE = is_openai_available()
+_openai_client = get_openai_client()
 
-try:
+
+def generate_all_jobs_bullets_batch(
+    jobs_data: List[Dict[str, Any]],
+    occupation_title: str,
+    language: str = "de"
+) -> Dict[int, List[str]]:
+    """
+    Generate ALL bullets for ALL jobs in ONE API call.
+    
+    This is the fastest approach - reduces 4-16 API calls to just 1!
+    
+    Args:
+        jobs_data: List of job dictionaries with keys:
+            - job_index: int
+            - position: str
+            - career_level: str
+            - company: str
+            - activities: List[str]
+            - num_bullets: int
+        occupation_title: The base occupation title.
+        language: Language (de, fr, it).
+    
+    Returns:
+        Dict mapping job_index to list of bullet points.
+    """
+    if not jobs_data or not OPENAI_AVAILABLE or not _openai_client:
+        return {}
+    
+    # Build combined prompt for all jobs
+    # Use simple 1, 2, 3 numbering (NOT job_index which may have gaps!)
+    jobs_prompt_parts = []
+    for i, job in enumerate(jobs_data):
+        activities_text = "\n".join([f"  - {a}" for a in job.get("activities", [])[:4]])
+        jobs_prompt_parts.append(f"""
+JOB {i + 1}: {job['position']} bei {job['company']}
+Karrierestufe: {job['career_level']}
+Anzahl Bullets: {job['num_bullets']}
+Tätigkeiten:
+{activities_text}""")
+    
+    all_jobs_text = "\n".join(jobs_prompt_parts)
+    total_bullets = sum(job['num_bullets'] for job in jobs_data)
+    
+    prompt = f"""Du bist ein erfahrener Schweizer Lebenslauf-Autor. 
+
+BERUF: {occupation_title}
+
+Generiere Lebenslauf-Bullets für diese {len(jobs_data)} Stellen:
+{all_jobs_text}
+
+REGELN:
+1. Bullets SPEZIFISCH für den Beruf "{occupation_title}"
+2. Jeder Bullet beginnt mit VERSCHIEDENEM Aktionsverb
+3. EINE konkrete Zahl pro Bullet (Projekte, Kunden, CHF, Team-Grösse)
+4. KEINE Prozentangaben, KEINE generischen Business-Phrasen
+5. Max 18 Wörter pro Bullet
+6. Schweizer Deutsch
+
+AUSGABEFORMAT (WICHTIG - genau so!):
+JOB 1:
+1. [Bullet]
+2. [Bullet]
+...
+
+JOB 2:
+1. [Bullet]
+...
+
+usw."""
+    
     try:
-        from openai import OpenAI
-        if settings.openai_api_key:
-            _openai_client = OpenAI(api_key=settings.openai_api_key)
-            OPENAI_AVAILABLE = True
-    except ImportError:
-        try:
-            import openai
-            if settings.openai_api_key:
-                openai.api_key = settings.openai_api_key
-            OPENAI_AVAILABLE = True
-        except ImportError:
-            pass
-except Exception:
-    pass
+        # Calculate needed tokens: ~30 tokens per bullet, plus overhead
+        total_bullets = sum(job['num_bullets'] for job in jobs_data)
+        needed_tokens = max(1200, total_bullets * 50 + 200)
+        
+        if hasattr(_openai_client, 'chat'):
+            response = _openai_client.chat.completions.create(
+                model=settings.openai_model_mini,
+                messages=[
+                    {"role": "system", "content": "Du schreibst professionelle CV-Bullets. Antworte NUR mit den nummerierten Bullets, formatiert genau wie angegeben."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=needed_tokens
+            )
+            result = response.choices[0].message.content.strip()
+        else:
+            return {}
+        
+        # Parse response into job buckets
+        bullets_by_job = {}
+        current_job = None
+        
+        for line in result.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            
+            # Check for job header
+            if line.upper().startswith("JOB "):
+                try:
+                    job_num = int(line.split(":")[0].replace("JOB", "").strip())
+                    current_job = job_num - 1  # Convert to 0-indexed
+                    bullets_by_job[current_job] = []
+                except:
+                    continue
+            elif current_job is not None and re.match(r'^\d+[\.\)]', line):
+                # This is a bullet
+                bullet = re.sub(r'^\d+[\.\)]\s*', '', line).strip()
+                if bullet and len(bullet) > 10:
+                    # Ensure capital letter
+                    bullet = bullet[0].upper() + bullet[1:] if len(bullet) > 1 else bullet.upper()
+                    bullets_by_job[current_job].append(bullet)
+        
+        return bullets_by_job
+        
+    except Exception as e:
+        import warnings
+        warnings.warn(f"Ultra-batch generation failed: {e}")
+        return {}
+
 
 # Action verbs by career level (for variety)
 ACTION_VERBS = {
@@ -195,6 +311,10 @@ def generate_realistic_metrics(
     # Select random metric type
     metric_type, unit, min_val, max_val = random.choice(metrics_config["types"])
     
+    # Ensure min_val and max_val are integers for random.randint()
+    min_val = int(min_val)
+    max_val = int(max_val)
+    
     # Calculate value based on career level scale
     base_value = random.randint(min_val, max_val)
     scaled_value = int(base_value * random.uniform(multiplier_min, multiplier_max))
@@ -319,8 +439,8 @@ def transform_activity_to_bullet(
         
         suggested_verb = random.choice(available_verbs)
         
-        # Create enhanced prompt for AI transformation
-        prompt = f"""Transform this Swiss occupation activity into an achievement-focused CV bullet.
+        # Create base prompt for AI transformation
+        base_prompt = f"""Transform this Swiss occupation activity into an achievement-focused CV bullet.
 
 Activity: {activity_text}
 Career Level: {career_level}
@@ -368,6 +488,9 @@ GOOD: 'Definierte Technologie-Roadmap für Abteilung (45 Mitarbeiter), Kostenred
 Language: {language}
 
 Return only the bullet point text, no markdown, no explanation, no quotes."""
+        
+        # Enhance prompt with metric range guidance from metrics_validator
+        prompt = enhance_achievement_prompt(base_prompt, career_level)
 
         messages = [
             {
@@ -418,6 +541,123 @@ Return only the bullet point text, no markdown, no explanation, no quotes."""
         return enhanced_transform_activity(
             activity_text, career_level, industry, used_verbs
         )
+
+
+def generate_bullets_batch(
+    activities: List[str],
+    career_level: str,
+    company: str,
+    industry: str,
+    years_in_position: int,
+    language: str,
+    num_bullets: int,
+    occupation_title: str = ""
+) -> List[str]:
+    """
+    Generate all bullets in a SINGLE API call (batch processing).
+    
+    This is much faster than individual calls (1 API call instead of N).
+    
+    Args:
+        activities: List of activity descriptions.
+        career_level: Career level.
+        company: Company name.
+        industry: Industry type.
+        years_in_position: Years in this position.
+        language: Language.
+        num_bullets: Number of bullets needed.
+        occupation_title: The specific occupation title (e.g. "Betonwerker/in EFZ").
+    
+    Returns:
+        List of bullet points, or empty list if failed.
+    """
+    if not activities or not OPENAI_AVAILABLE or not _openai_client:
+        return []
+    
+    # Build batch prompt
+    activities_text = "\n".join([f"- {a}" for a in activities[:num_bullets + 2]])
+    
+    # Career level specific examples
+    level_examples = {
+        "junior": """1. Führte Betonierarbeiten an 15 Baustellen durch, hielt alle Sicherheitsstandards ein
+2. Unterstützte bei Schalungsaufbau für 8 Fundamente, termingerecht fertiggestellt
+3. Bediente Rüttelgeräte und Betonmischer bei 20 Projekten""",
+        "mid": """1. Koordinierte Betonarbeiten für 12 Bauprojekte, optimierte Materialverbrauch um CHF 8'000
+2. Plante Einsatz von 5 Fachkräften, alle Etappen termingerecht abgeschlossen
+3. Überwachte Qualitätskontrolle bei 30 Betonierungen, null Nacharbeiten nötig""",
+        "senior": """1. Leitete Betonierteam von 8 Fachkräften auf Grossprojekt mit CHF 2.5 Mio Budget
+2. Verantwortete Baustellen-Logistik für 4 parallele Projekte, 15% unter Budget
+3. Implementierte neue Betonmischtechnik, reduzierte Materialverlust um CHF 12'000""",
+        "lead": """1. Führte Bauabteilung mit 25 Mitarbeitenden, Jahresumsatz CHF 4.8 Mio
+2. Etablierte Qualitätsstandards für 40 Bauprojekte, null Mängelrügen
+3. Definierte Weiterbildungsprogramm für Team, 95% Mitarbeiterzufriedenheit"""
+    }
+    
+    examples = level_examples.get(career_level, level_examples["mid"])
+    
+    prompt = f"""Du bist ein erfahrener Schweizer Lebenslauf-Autor. Schreibe {num_bullets} Aufzählungspunkte für einen Lebenslauf.
+
+BERUF: {occupation_title if occupation_title else "Fachperson"}
+TÄTIGKEITEN AUS DER PRAXIS:
+{activities_text}
+
+KONTEXT:
+- Karrierestufe: {career_level}
+- Firma: {company}
+
+WICHTIGE REGELN:
+1. Bullets müssen SPEZIFISCH für den Beruf "{occupation_title}" sein
+2. Verwende KONKRETE Tätigkeiten aus der obigen Liste - keine generischen Business-Phrasen!
+3. KEINE Marketing/Strategie/Management-Floskeln für handwerkliche Berufe!
+4. Jeder Bullet beginnt mit einem VERSCHIEDENEN Aktionsverb
+5. Füge EINE konkrete Zahl hinzu (KEINE Prozente! Stattdessen: Anzahl Projekte, Stunden, Kunden, CHF-Beträge)
+6. Maximal 20 Wörter pro Bullet
+7. Professionelles Schweizer Deutsch
+
+BEISPIELE für {career_level}-Level:
+{examples}
+
+AUSGABEFORMAT:
+Genau {num_bullets} Bullets, nummeriert 1-{num_bullets}. Nur die Bullets, keine Erklärung."""
+
+    try:
+        messages = [
+            {"role": "system", "content": "You are a professional CV writer. Generate varied, metric-focused bullet points. Return ONLY the numbered bullets, nothing else."},
+            {"role": "user", "content": prompt}
+        ]
+        
+        if hasattr(_openai_client, 'chat'):
+            response = _openai_client.chat.completions.create(
+                model=settings.openai_model_mini,
+                messages=messages,
+                temperature=settings.ai_temperature_creative,
+                max_tokens=500
+            )
+            result = response.choices[0].message.content.strip()
+        else:
+            return []
+        
+        # Parse bullets from response
+        bullets = []
+        for line in result.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            # Remove numbering (1., 2., etc.)
+            import re
+            cleaned = re.sub(r'^[\d]+[\.\)]\s*', '', line)
+            cleaned = cleaned.strip().strip('-').strip('•').strip()
+            if cleaned and len(cleaned) > 10:
+                # Ensure capital letter
+                cleaned = cleaned[0].upper() + cleaned[1:] if len(cleaned) > 1 else cleaned.upper()
+                bullets.append(cleaned)
+        
+        return bullets[:num_bullets]
+        
+    except Exception as e:
+        import warnings
+        warnings.warn(f"Batch bullet generation failed: {e}")
+        return []
 
 
 def enhanced_transform_activity(
@@ -631,7 +871,8 @@ def generate_responsibilities_from_activities(
     num_bullets: int = 4,
     is_current_job: bool = True,
     industry: str = "other",
-    years_in_position: int = 2
+    years_in_position: int = 2,
+    occupation_title: str = ""
 ) -> List[str]:
     """
     Generate responsibility bullets from CV_DATA activities with metrics.
@@ -645,14 +886,21 @@ def generate_responsibilities_from_activities(
         is_current_job: Whether this is the current job.
         industry: Industry type.
         years_in_position: Years in this position.
+        occupation_title: The specific occupation title (e.g. "Betonwerker/in EFZ").
     
     Returns:
         List of responsibility bullet points with metrics.
     """
     responsibilities = []
     
-    # Extract activities from CV_DATA
+    # Extract activities from CV_DATA and get occupation title if not provided
     activities = extract_activities_from_occupation(job_id)
+    
+    # Get occupation title from database if not provided
+    if not occupation_title and job_id:
+        occupation_doc = get_occupation_by_id(job_id)
+        if occupation_doc:
+            occupation_title = occupation_doc.get("title", "")
     
     if not activities:
         # Fallback: generate generic responsibilities with metrics
@@ -684,30 +932,70 @@ def generate_responsibilities_from_activities(
     # Track used verbs to ensure variety
     used_verbs = []
     
-    # Transform each activity to bullet with metrics
-    for activity in selected_activities:
-        bullet = transform_activity_to_bullet(
-            activity,
+    # Try BATCH generation first (1 API call instead of N)
+    if OPENAI_AVAILABLE and _openai_client and len(selected_activities) > 1:
+        batch_bullets = generate_bullets_batch(
+            selected_activities,
             career_level,
             company,
             industry,
             years_in_position,
             language,
-            used_verbs,
-            use_ai=True
+            num_bullets,
+            occupation_title
         )
-        
-        if bullet:
-            responsibilities.append(bullet)
+        if batch_bullets and len(batch_bullets) >= num_bullets - 1:
+            responsibilities = batch_bullets
+        else:
+            # Fallback to individual generation
+            for activity in selected_activities:
+                bullet = transform_activity_to_bullet(
+                    activity, career_level, company, industry,
+                    years_in_position, language, used_verbs, use_ai=True
+                )
+                if bullet:
+                    responsibilities.append(bullet)
+    else:
+        # Transform each activity to bullet with metrics (individual calls)
+        for activity in selected_activities:
+            bullet = transform_activity_to_bullet(
+                activity, career_level, company, industry,
+                years_in_position, language, used_verbs, use_ai=True
+            )
+            if bullet:
+                responsibilities.append(bullet)
     
     # Validate and clean bullets
     validated_responsibilities, issues = validate_and_clean_bullets(
         responsibilities, career_level, max_attempts=3
     )
     
+    # Validate metrics with metrics_validator (STRICT)
+    validated_with_metrics = []
+    rejected_bullets = []
+    for bullet in validated_responsibilities:
+        is_valid, error_msg, metric = validate_bullet_metrics(bullet, career_level)
+        if is_valid:
+            validated_with_metrics.append(bullet)
+        else:
+            # REJECT invalid bullets (strict validation - don't append)
+            rejected_bullets.append((bullet, error_msg))
+            # Don't append invalid bullets - they will be regenerated if needed
+    
+    # Validate job metric consistency (STRICT)
+    is_consistent, consistency_issues, metric_dist = validate_job_metric_consistency(
+        validated_with_metrics, career_level
+    )
+    
+    if not is_consistent and consistency_issues:
+        # Warn about consistency issues and track for quality score
+        import warnings
+        warnings.warn(f"Metric consistency issues: {consistency_issues[:2]}")
+        # Continue but track for quality score (don't reject bullets here)
+    
     # Ensure progression
     validated_responsibilities = ensure_progression_in_bullets(
-        validated_responsibilities,
+        validated_with_metrics,
         career_level,
         is_older_job=not is_current_job
     )
@@ -717,7 +1005,9 @@ def generate_responsibilities_from_activities(
         generic = generate_generic_responsibility(
             career_level, language, industry
         )
-        if generic not in validated_responsibilities:
+        # Validate generic bullet too
+        is_valid, _, _ = validate_bullet_metrics(generic, career_level)
+        if is_valid and generic not in validated_responsibilities:
             validated_responsibilities.append(generic)
     
     return validated_responsibilities[:num_bullets]
@@ -727,112 +1017,122 @@ def generate_generic_responsibilities(
     career_level: str,
     num_bullets: int,
     language: str = "de",
-    industry: str = "other"
+    industry: str = "other",
+    occupation_title: str = ""
 ) -> List[str]:
     """
-    Generate generic responsibilities with metrics when no activities available.
+    Generate responsibilities with metrics when no activities available.
+    Uses industry-specific templates for more realistic results.
     
     Args:
         career_level: Career level.
         num_bullets: Number of bullets.
         language: Language.
         industry: Industry type.
+        occupation_title: The occupation title for context.
     
     Returns:
-        List of generic responsibility bullets with metrics.
+        List of responsibility bullets with metrics.
     """
-    generic_templates = {
-        "junior": [
-            "Durchführung von operativen Aufgaben",
-            "Unterstützung bei Projekten",
-            "Mitarbeit in Teams",
-            "Erstellung von Dokumentationen"
-        ],
-        "mid": [
-            "Planung und Durchführung von Projekten",
-            "Koordination von Arbeitsabläufen",
-            "Entwicklung von Lösungen",
-            "Zusammenarbeit mit Partnern"
-        ],
-        "senior": [
-            "Leitung von komplexen Projekten",
-            "Strategische Planung",
-            "Mentoring von Team-Mitgliedern",
-            "Optimierung von Prozessen"
-        ],
-        "lead": [
-            "Strategische Führung",
-            "Leitung von Teams",
-            "Verantwortung für Budget",
-            "Entwicklung von Strategien"
-        ]
-    }
+    # Generate bullets using the improved function
+    bullets = []
+    for _ in range(num_bullets):
+        bullet = generate_generic_responsibility(career_level, language, industry, occupation_title)
+        bullets.append(bullet)
     
-    templates = generic_templates.get(career_level, generic_templates["mid"])
-    selected = random.sample(templates, min(num_bullets, len(templates)))
+    # Ensure variety - no duplicate starting verbs
+    unique_bullets = []
+    used_starts = set()
+    for bullet in bullets:
+        start = bullet.split()[0].lower() if bullet.split() else ""
+        if start not in used_starts:
+            unique_bullets.append(bullet)
+            used_starts.add(start)
     
-    # Add metrics to each template
-    bullets_with_metrics = []
-    used_verbs = []
+    # Fill up if needed
+    while len(unique_bullets) < num_bullets:
+        bullet = generate_generic_responsibility(career_level, language, industry, occupation_title)
+        start = bullet.split()[0].lower() if bullet.split() else ""
+        if start not in used_starts:
+            unique_bullets.append(bullet)
+            used_starts.add(start)
     
-    for template in selected:
-        # Get verb
-        available_verbs = [
-            v for v in ACTION_VERBS.get(career_level, ACTION_VERBS["mid"])
-            if v.lower() not in [uv.lower() for uv in used_verbs]
-        ]
-        if not available_verbs:
-            available_verbs = ACTION_VERBS.get(career_level, ACTION_VERBS["mid"])
-        
-        verb = random.choice(available_verbs)
-        used_verbs.append(verb)
-        
-        # Generate metrics
-        metrics = generate_realistic_metrics(industry, career_level, template)
-        
-        # Construct bullet
-        bullet = f"{verb} {template.lower()}, {metrics['formatted']}"
-        bullet = bullet[0].upper() + bullet[1:] if len(bullet) > 1 else bullet.upper()
-        
-        bullets_with_metrics.append(bullet)
-    
-    return bullets_with_metrics
+    return unique_bullets[:num_bullets]
 
 
 def generate_generic_responsibility(
     career_level: str,
     language: str = "de",
-    industry: str = "other"
+    industry: str = "other",
+    occupation_title: str = ""
 ) -> str:
     """
-    Generate a single generic responsibility with metrics.
+    Generate a single responsibility with metrics, tailored to industry.
     
     Args:
         career_level: Career level.
         language: Language.
         industry: Industry type.
+        occupation_title: The occupation title for context.
     
     Returns:
-        Generic responsibility bullet with metrics.
+        Responsibility bullet with metrics.
     """
-    generic = {
-        "junior": "Durchführung von operativen Aufgaben",
-        "mid": "Planung und Durchführung von Projekten",
-        "senior": "Leitung von komplexen Projekten",
-        "lead": "Strategische Führung und Entwicklung"
+    # Industry-specific templates
+    industry_templates = {
+        "construction": {
+            "junior": ["Ausführung von Bauarbeiten an {num} Baustellen", "Mitarbeit bei {num} Bauprojekten", "Unterstützung bei Montagearbeiten"],
+            "mid": ["Koordination von {num} Bauprojekten", "Überwachung von Arbeiten auf {num} Baustellen", "Planung von Materialeinsatz"],
+            "senior": ["Leitung von {num} Bauprojekten", "Verantwortung für Baustellen mit CHF {chf} Budget", "Führung von {team} Mitarbeitenden"],
+            "lead": ["Führung der Bauabteilung mit {team} Mitarbeitenden", "Verantwortung für Jahresumsatz CHF {chf}", "Strategische Bauplanung"]
+        },
+        "technology": {
+            "junior": ["Entwicklung von {num} Softwaremodulen", "Bearbeitung von {num} Support-Tickets", "Testing von Applikationen"],
+            "mid": ["Umsetzung von {num} IT-Projekten", "Koordination mit {team} Entwicklern", "Implementierung neuer Systeme"],
+            "senior": ["Leitung von {num} IT-Projekten", "Architektur für {num} Systeme", "Mentoring von {team} Entwicklern"],
+            "lead": ["Führung des IT-Teams mit {team} Mitarbeitenden", "Verantwortung für IT-Budget CHF {chf}", "Strategische IT-Planung"]
+        },
+        "healthcare": {
+            "junior": ["Betreuung von {num} Patienten täglich", "Dokumentation von Behandlungen", "Unterstützung des Pflegeteams"],
+            "mid": ["Koordination der Pflege von {num} Patienten", "Anleitung von {team} Auszubildenden", "Qualitätssicherung"],
+            "senior": ["Leitung des Pflegeteams mit {team} Mitarbeitenden", "Verantwortung für Station mit {num} Betten", "Schulung von Personal"],
+            "lead": ["Führung der Pflegeabteilung", "Verantwortung für {team} Mitarbeitende", "Strategische Personalplanung"]
+        },
+        "other": {
+            "junior": ["Bearbeitung von {num} Aufträgen", "Mitarbeit in {num} Projekten", "Unterstützung des Teams"],
+            "mid": ["Koordination von {num} Projekten", "Betreuung von {num} Kunden", "Optimierung von Arbeitsabläufen"],
+            "senior": ["Leitung von {num} Projekten", "Führung von {team} Mitarbeitenden", "Verantwortung für Budget CHF {chf}"],
+            "lead": ["Führung des Teams mit {team} Mitarbeitenden", "Strategische Planung", "Verantwortung für Umsatz CHF {chf}"]
+        }
     }
     
-    template = generic.get(career_level, generic["mid"])
+    # Get templates for industry
+    templates_by_level = industry_templates.get(industry, industry_templates["other"])
+    templates = templates_by_level.get(career_level, templates_by_level["mid"])
     
-    # Get verb
+    # Select random template
+    template = random.choice(templates)
+    
+    # Generate realistic numbers based on career level
+    level_scales = {"junior": (5, 15), "mid": (10, 25), "senior": (15, 40), "lead": (25, 60)}
+    min_scale, max_scale = level_scales.get(career_level, (10, 25))
+    
+    num = random.randint(min_scale, max_scale)
+    team = random.randint(3, 15) if career_level in ["senior", "lead"] else random.randint(2, 5)
+    chf = random.choice([50000, 100000, 250000, 500000, 1000000, 2500000])
+    
+    # Fill template
+    bullet = template.format(num=num, team=team, chf=f"{chf:,}".replace(",", "'"))
+    
+    # Add action verb
     verbs = ACTION_VERBS.get(career_level, ACTION_VERBS["mid"])
     verb = random.choice(verbs)
     
-    # Generate metrics
-    metrics = generate_realistic_metrics(industry, career_level, template)
+    # Only add verb if template doesn't already start with one
+    if not any(bullet.lower().startswith(v.lower()) for v in ["leitung", "führung", "verantwortung", "koordination"]):
+        bullet = f"{verb} {bullet[0].lower()}{bullet[1:]}"
     
-    # Construct bullet
-    bullet = f"{verb} {template.lower()}, {metrics['formatted']}"
+    # Ensure capital letter
     bullet = bullet[0].upper() + bullet[1:] if len(bullet) > 1 else bullet.upper()
     
     return bullet
@@ -881,9 +1181,8 @@ def ensure_progression_in_bullets(
                         # Already has some complexity
                         pass
                     else:
-                        # Add leadership context (but avoid "Erfolgreich" spam)
-                        if "verantwortung" not in bullet_lower:
-                            bullet = f"Verantwortung für {bullet.lower()}"
+                        # Remove this completely - don't add "Verantwortung für"
+                        pass
         
         adjusted_bullets.append(bullet)
     

@@ -33,19 +33,48 @@ from src.database.queries import get_occupation_by_id
 console = Console()
 
 
-def export_cv_pdf(cv_doc: CVDocument, output_path: Path, template_name: Optional[str] = None) -> Path:
+def export_cv_pdf(cv_doc: CVDocument, output_path: Path, template_name: Optional[str] = "classic") -> Path:
     """
-    Export CV to PDF using ReportLab (like sample_outputs).
-    No HTML fallbacks - only PDF or error.
+    Export CV to PDF using modern templates.
+    
+    Available templates:
+    - classic: Blue, professional
+    - emerald: Green, elegant
+    - creative: Purple, modern
+    - dynamic: Orange, bold
     
     Args:
         cv_doc: Complete CV document.
         output_path: Output file path.
-        template_name: Not used, kept for compatibility.
+        template_name: Template to use (classic, emerald, creative, dynamic).
     
     Returns:
         Path to generated PDF.
     """
+    try:
+        from src.export.pdf_templates import render_cv_with_template, get_available_templates
+        
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Ensure .pdf extension
+        if output_path.suffix.lower() != '.pdf':
+            output_path = output_path.with_suffix('.pdf')
+        
+        # Use template system
+        template = template_name or "classic"
+        available = get_available_templates()
+        if template not in available:
+            template = "classic"
+        
+        render_cv_with_template(cv_doc, str(output_path), template)
+        return output_path
+        
+    except ImportError:
+        # Fallback to simple PDF if template system fails
+        pass
+    
+    # Fallback implementation
     try:
         from reportlab.lib.pagesizes import A4
         from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -658,7 +687,8 @@ def generate(
                 continue
     
     # Print summary
-    console.print("\n" + Panel.fit("[bold blue]Generation Complete[/bold blue]", border_style="blue"))
+    console.print()
+    console.print(Panel.fit("[bold blue]Generation Complete[/bold blue]", border_style="blue"))
     
     # Statistics table
     table = Table(title="Generation Statistics", show_header=True, header_style="bold magenta")

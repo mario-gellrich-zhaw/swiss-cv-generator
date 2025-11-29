@@ -345,6 +345,12 @@ def validate_education_timeline(
         entry["start_year"] = start_year
         entry["end_year"] = end_year
         
+        # VALIDATION: Skip entries with empty degree or institution
+        degree = entry.get("degree", "")
+        institution = entry.get("institution", "")
+        if not degree or not institution:
+            continue  # Skip this entry
+        
         validated.append(entry)
     
     return validated

@@ -24,6 +24,10 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from src.generation.cv_assembler import CVDocument, get_age_group
+from src.generation.metrics_validator import (
+    validate_bullet_metrics,
+    validate_job_metric_consistency
+)
 from src.database.queries import (
     get_occupation_by_id,
     sample_company_by_canton_and_industry,
@@ -752,9 +756,11 @@ def _validate_achievements(
     if not cv_doc.jobs:
         return issues
     
-    # Check ≥60% of bullets have metrics
+    # Check ≥60% of bullets have metrics AND validate metric realism
     total_bullets = 0
     bullets_with_metrics = 0
+    invalid_metrics_count = 0
+    career_level = persona.get("career_level", "mid") if persona else "mid"
     
     for job in cv_doc.jobs:
         responsibilities = job.get("responsibilities", [])
@@ -763,6 +769,20 @@ def _validate_achievements(
             # Check for numbers (metrics)
             if re.search(r'\d+', resp):
                 bullets_with_metrics += 1
+                # Validate metric realism using metrics_validator
+                is_valid, error_msg, _ = validate_bullet_metrics(resp, career_level)
+                if not is_valid:
+                    invalid_metrics_count += 1
+                    issues.append(ValidationIssue(
+                        category="achievement",
+                        severity="warning" if "exceeds absolute max" not in error_msg.lower() else "critical",
+                        section="jobs",
+                        field="metrics",
+                        message=f"Invalid metric in bullet: {error_msg}",
+                        suggested_fix="Regenerate bullet with realistic metrics",
+                        score_impact=5.0 if "exceeds absolute max" not in error_msg.lower() else 15.0,
+                        auto_fixable=False
+                    ))
     
     if total_bullets > 0:
         metrics_ratio = bullets_with_metrics / total_bullets
@@ -777,6 +797,25 @@ def _validate_achievements(
                 score_impact=10.0,
                 auto_fixable=False
             ))
+    
+    # Validate job metric consistency
+    for job in cv_doc.jobs:
+        responsibilities = job.get("responsibilities", [])
+        if len(responsibilities) > 1:
+            is_consistent, consistency_issues, _ = validate_job_metric_consistency(
+                responsibilities, career_level
+            )
+            if not is_consistent and consistency_issues:
+                issues.append(ValidationIssue(
+                    category="achievement",
+                    severity="warning",
+                    section="jobs",
+                    field="metric_consistency",
+                    message=f"Inconsistent metrics in job: {', '.join(consistency_issues[:2])}",
+                    suggested_fix="Vary metric types across bullets (%, people, projects, CHF)",
+                    score_impact=5.0,
+                    auto_fixable=False
+                ))
     
     # Check for impact language
     impact_keywords = ["reduzierte", "steigerte", "optimierte", "verbesserte", "erhöhte", "senkte"]

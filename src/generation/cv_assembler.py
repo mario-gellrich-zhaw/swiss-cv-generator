@@ -16,6 +16,7 @@ Run: Used by persona generation pipeline
 """
 import sys
 import random
+import re
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime
@@ -39,29 +40,17 @@ from src.generation.cv_job_history_generator import generate_job_history
 from src.generation.cv_continuing_education import generate_additional_education
 from src.generation.cv_activities_transformer import generate_responsibilities_from_activities
 from src.config import get_settings
+from src.generation.openai_client import (
+    get_openai_client,
+    is_openai_available,
+    call_openai_chat
+)
 
 settings = get_settings()
 
-# OpenAI client setup
-OPENAI_AVAILABLE = False
-_openai_client = None
-
-try:
-    try:
-        from openai import OpenAI
-        if settings.openai_api_key:
-            _openai_client = OpenAI(api_key=settings.openai_api_key)
-            OPENAI_AVAILABLE = True
-    except ImportError:
-        try:
-            import openai
-            if settings.openai_api_key:
-                openai.api_key = settings.openai_api_key
-            OPENAI_AVAILABLE = True
-        except ImportError:
-            pass
-except Exception:
-    pass
+# Use centralized OpenAI client
+OPENAI_AVAILABLE = is_openai_available()
+_openai_client = get_openai_client()
 
 
 @dataclass
@@ -1229,13 +1218,41 @@ def generate_complete_cv(persona: Dict[str, Any]) -> Tuple[Optional[CVDocument],
     # 4. Education history
     education_history = generate_education_history(persona, occupation_doc)
     
-    # 5. Job history
-    job_history = generate_job_history(persona, occupation_doc)
+    # Extract education parameters for FORWARD timeline calculation
+    education_start_year = None
+    education_duration_years = None
+    bildungstyp = ""
+    if education_history:
+        first_edu = education_history[0]
+        education_start_year = first_edu.get("start_year")
+        education_end_year = first_edu.get("end_year")
+        if education_start_year and education_end_year:
+            education_duration_years = education_end_year - education_start_year
+        bildungstyp = first_edu.get("type", "")
     
-    # Add responsibilities to job history
+    # 5. Job history (with FORWARD timeline calculation)
+    job_history = generate_job_history(
+        persona,
+        occupation_doc,
+        language=language,
+        education_start_year=education_start_year,
+        education_duration_years=education_duration_years,
+        bildungstyp=bildungstyp
+    )
+    
+    # Note: Responsibilities are already generated in generate_job_history via batch API call
+    # Only generate if missing (fallback)
     for job in job_history:
+        if job.get("category") == "gap_filler":
+            continue
+        
+        existing_responsibilities = job.get("responsibilities", [])
+        if existing_responsibilities and len(existing_responsibilities) > 0:
+            # Already has responsibilities from batch generation - keep them!
+            continue
+        
+        # Fallback: only if no responsibilities exist
         if job.get("is_current", False):
-            # Generate responsibilities for current job
             responsibilities = generate_responsibilities_from_activities(
                 job_id,
                 persona.get("career_level", "mid"),
@@ -1245,7 +1262,6 @@ def generate_complete_cv(persona: Dict[str, Any]) -> Tuple[Optional[CVDocument],
                 is_current_job=True
             )
         else:
-            # Fewer responsibilities for previous jobs
             previous_level = "mid" if persona.get("career_level") in ["senior", "lead"] else "junior"
             responsibilities = generate_responsibilities_from_activities(
                 job_id,

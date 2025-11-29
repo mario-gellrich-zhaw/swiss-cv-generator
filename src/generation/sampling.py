@@ -57,18 +57,41 @@ class SamplingEngine:
         self.data_dir = data_dir
         self.project_root = Path(__file__).parent.parent.parent
         
-        # Load existing data
-        self.cantons = load_cantons_csv(os.path.join(data_dir, 'cantons.csv'))
-        self.companies = load_companies_csv(os.path.join(data_dir, 'companies.csv'))
+        # Load existing data (optional - we use MongoDB now)
+        try:
+            self.cantons = load_cantons_csv(os.path.join(data_dir, 'cantons.csv'))
+        except (FileNotFoundError, IOError):
+            self.cantons = []  # Use MongoDB instead
+        
+        try:
+            self.companies = load_companies_csv(os.path.join(data_dir, 'companies.csv'))
+        except (FileNotFoundError, IOError):
+            self.companies = []  # Use MongoDB instead
+        
         try:
             self.occupations = load_occupations_json(os.path.join(data_dir, 'occupations.json'))
-        except:
-            self.occupations = []
+        except (FileNotFoundError, IOError, json.JSONDecodeError):
+            self.occupations = []  # Use MongoDB instead
         
-        self.surnames, self.surname_weights = load_name_csv(os.path.join(data_dir, 'surnames.csv'))
-        self.names_de, self.names_de_weights = load_name_csv(os.path.join(data_dir, 'names_de.csv'))
-        self.names_fr, self.names_fr_weights = load_name_csv(os.path.join(data_dir, 'names_fr.csv'))
-        self.names_it, self.names_it_weights = load_name_csv(os.path.join(data_dir, 'names_it.csv'))
+        try:
+            self.surnames, self.surname_weights = load_name_csv(os.path.join(data_dir, 'surnames.csv'))
+        except (FileNotFoundError, IOError):
+            self.surnames, self.surname_weights = [], []  # Use MongoDB instead
+        
+        try:
+            self.names_de, self.names_de_weights = load_name_csv(os.path.join(data_dir, 'names_de.csv'))
+        except (FileNotFoundError, IOError):
+            self.names_de, self.names_de_weights = [], []  # Use MongoDB instead
+        
+        try:
+            self.names_fr, self.names_fr_weights = load_name_csv(os.path.join(data_dir, 'names_fr.csv'))
+        except (FileNotFoundError, IOError):
+            self.names_fr, self.names_fr_weights = [], []  # Use MongoDB instead
+        
+        try:
+            self.names_it, self.names_it_weights = load_name_csv(os.path.join(data_dir, 'names_it.csv'))
+        except (FileNotFoundError, IOError):
+            self.names_it, self.names_it_weights = [], []  # Use MongoDB instead
         
         # Load demographic configuration
         self._load_demographic_config()
@@ -102,12 +125,34 @@ class SamplingEngine:
             self.demographics = {}
     
     def sample_canton(self):
-        """Sample canton weighted by population."""
-        weights = [c.population for c in self.cantons]
-        return weighted_choice(self.cantons, weights)
+        """Sample canton weighted by population (from MongoDB)."""
+        # Use MongoDB query instead of CSV
+        canton_doc = sample_canton_weighted()
+        if canton_doc:
+            # Return a simple object with primary_language
+            class Canton:
+                def __init__(self, doc):
+                    self.code = doc.get("code", "")
+                    self.name = doc.get("name_de", "")
+                    self.population = doc.get("population", 0)
+                    # Determine primary language from canton data
+                    lang_de = doc.get("language_de", 0)
+                    lang_fr = doc.get("language_fr", 0)
+                    lang_it = doc.get("language_it", 0)
+                    if lang_de >= lang_fr and lang_de >= lang_it:
+                        self.primary_language = "de"
+                    elif lang_fr >= lang_it:
+                        self.primary_language = "fr"
+                    else:
+                        self.primary_language = "it"
+            return Canton(canton_doc)
+        return None
     
     def sample_language_for_canton(self, canton):
         """Sample language based on canton."""
+        if canton is None:
+            return Language("de")  # Default
+        
         probs = {canton.primary_language: 0.9}
         for l in ['de', 'fr', 'it']:
             if l != canton.primary_language:
@@ -146,6 +191,61 @@ class SamplingEngine:
         experience = min(experience, max(0, age - 16))
         
         return experience
+    
+    def _derive_industry_from_berufsfeld(self, berufsfeld: str) -> str:
+        """Derive industry from berufsfeld using mapping."""
+        if not berufsfeld:
+            return "other"
+        
+        bf_lower = berufsfeld.lower()
+        
+        # Industry mapping based on berufsfeld keywords
+        BERUFSFELD_TO_INDUSTRY = {
+            "informatik": "technology",
+            "technologie": "technology",
+            "it": "technology",
+            "software": "technology",
+            "gesundheit": "healthcare",
+            "medizin": "healthcare",
+            "pflege": "healthcare",
+            "kranken": "healthcare",
+            "spital": "healthcare",
+            "wirtschaft": "finance",
+            "finanz": "finance",
+            "bank": "finance",
+            "versicherung": "finance",
+            "treuhan": "finance",
+            "bau": "construction",
+            "architektur": "construction",
+            "handwerk": "construction",
+            "garten": "construction",
+            "landschaft": "construction",
+            "industrie": "manufacturing",
+            "maschinen": "manufacturing",
+            "mechanik": "manufacturing",
+            "produktion": "manufacturing",
+            "metall": "manufacturing",
+            "elektro": "manufacturing",
+            "bildung": "education",
+            "schule": "education",
+            "lehrer": "education",
+            "pädagog": "education",
+            "handel": "retail",
+            "verkauf": "retail",
+            "detail": "retail",
+            "laden": "retail",
+            "gastro": "hospitality",
+            "hotel": "hospitality",
+            "küche": "hospitality",
+            "restaurant": "hospitality",
+            "tourismus": "hospitality",
+        }
+        
+        for keyword, industry in BERUFSFELD_TO_INDUSTRY.items():
+            if keyword in bf_lower:
+                return industry
+        
+        return "other"
     
     def _validate_persona(self, persona_dict: Dict[str, Any]) -> bool:
         """Validate persona data for consistency."""
@@ -220,18 +320,29 @@ class SamplingEngine:
             if not canton:
                 canton = self.sample_canton()
         
-        # Step 7: Sample industry
+        # Step 7+8: Sample occupation FIRST, then derive industry from it
         if preferred_industry:
+            occupation_doc = sample_occupation_by_industry(preferred_industry)
             industry = preferred_industry
         else:
-            industry = sample_industry_weighted()
+            # Sample occupation first, then derive industry
+            occupation_doc = sample_occupation_by_industry(sample_industry_weighted())
+        
+        job_id = occupation_doc.get("job_id") if occupation_doc else None
+        occupation_title = occupation_doc.get("title") if occupation_doc else f"{career_level.capitalize()} Worker"
+        
+        # DERIVE industry FROM occupation to avoid mismatch
+        if occupation_doc and not preferred_industry:
+            # Get industry from occupation's berufsfelder
+            berufsfelder = occupation_doc.get("categories", {}).get("berufsfelder", [])
+            if berufsfelder:
+                industry = self._derive_industry_from_berufsfeld(berufsfelder[0])
+            else:
+                industry = "other"
+        elif not preferred_industry:
+            industry = "other"
         
         industry_employment_pct = get_industry_employment_percentage(industry)
-        
-        # Step 8: Sample occupation from CV_DATA
-        occupation_doc = sample_occupation_by_industry(industry)
-        job_id = occupation_doc.get("job_id") if occupation_doc else None
-        occupation_title = occupation_doc.get("title") if occupation_doc else f"{career_level.capitalize()} {industry}"
         
         # Step 9: Sample language based on canton
         language = self.sample_language_for_canton(canton)

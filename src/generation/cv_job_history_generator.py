@@ -25,12 +25,23 @@ from src.database.queries import (
     get_occupation_by_id,
     get_skills_by_occupation,
     get_activities_by_occupation,
-    sample_company_by_canton_and_industry
+    sample_company_by_canton_and_industry,
+    get_career_progression_title,
+    get_related_occupations_by_berufsfeld
 )
 from src.database.mongodb_manager import get_db_manager
 from src.generation.cv_activities_transformer import (
     generate_responsibilities_from_activities,
-    filter_activities_by_career_level
+    filter_activities_by_career_level,
+    generate_all_jobs_bullets_batch,
+    extract_activities_from_occupation
+)
+from src.generation.company_validator import (
+    get_valid_company_for_occupation,
+    remove_verschiedene_positionen_entries
+)
+from src.generation.cv_timeline_validator import (
+    calculate_timeline_forward
 )
 from src.config import get_settings
 
@@ -115,11 +126,21 @@ def calculate_realistic_job_timeline(
         
         if is_current:
             # Current job: 2-5 years (longer for senior/lead)
-            duration_years = random.randint(2, 5)
+            # Ensure we have enough years_experience
+            max_duration = min(5, max(2, remaining_years))
+            if max_duration < 2:
+                duration_years = max(1, remaining_years)
+            else:
+                duration_years = random.randint(2, max_duration)
             duration_months = random.randint(0, 11)
         else:
             # Previous jobs: 2-4 years, minimum 1 year
-            duration_years = random.randint(2, 4)
+            # Ensure we have enough remaining_years
+            max_duration = min(4, max(2, remaining_years))
+            if max_duration < 2:
+                duration_years = max(1, remaining_years)
+            else:
+                duration_years = random.randint(2, max_duration)
             duration_months = random.randint(0, 11)
         
         # Ensure minimum 1 year
@@ -385,13 +406,14 @@ def ensure_logical_progression(
 ) -> List[Dict[str, Any]]:
     """
     Ensure logical career progression in job titles and responsibilities.
+    DOES NOT modify bullets - they are already correctly generated!
     
     Args:
         job_history: List of job entries (oldest first).
         career_level: Current career level.
     
     Returns:
-        Job history with logical progression.
+        Job history with logical progression (bullets preserved).
     """
     if not job_history:
         return job_history
@@ -412,35 +434,115 @@ def ensure_logical_progression(
         key=lambda j: (int(j.get("start_date", "2000-01").split("-")[0]), int(j.get("start_date", "2000-01").split("-")[1]) if "-" in j.get("start_date", "") else 1)
     )
     
-    # Assign career levels to jobs
-    num_jobs = len(sorted_jobs)
-    for i, job in enumerate(sorted_jobs):
+    # Filter to only real jobs (not gap fillers) for progression logic
+    real_jobs = [j for j in sorted_jobs if j.get("category") != "gap_filler"]
+    num_real_jobs = len(real_jobs)
+    
+    # Assign career levels to real jobs only
+    for i, job in enumerate(real_jobs):
         if i < len(progression):
             job_level = progression[i]
         else:
-            job_level = progression[0] if i == 0 else progression[-1]
+            job_level = progression[-1]
         
         # Update position title if needed
         base_title = job.get("position", "")
-        if "Senior" not in base_title and "Lead" not in base_title and "Leiter" not in base_title:
-            if job_level == "senior":
+        if "Senior" not in base_title and "Lead" not in base_title and "Leiter" not in base_title and "Chef" not in base_title:
+            if job_level == "senior" and num_real_jobs > 2:
                 job["position"] = f"Senior {base_title}"
-            elif job_level == "lead":
+            elif job_level == "lead" and num_real_jobs > 3:
                 job["position"] = f"Leiter {base_title}" if random.random() < 0.5 else f"Lead {base_title}"
         
-        # Ensure responsibilities increase in complexity
-        responsibilities = job.get("responsibilities", [])
-        if i == 0:  # Oldest job
-            # Simple responsibilities
-            job["responsibilities"] = responsibilities[:2] if len(responsibilities) > 2 else responsibilities
-        elif i == num_jobs - 1:  # Current job
-            # Most complex responsibilities
-            job["responsibilities"] = responsibilities[:5] if len(responsibilities) > 5 else responsibilities
-        else:
-            # Medium complexity
-            job["responsibilities"] = responsibilities[:3] if len(responsibilities) > 3 else responsibilities
+        # DO NOT modify responsibilities - they are already correctly generated!
+        # The batch generation already handles bullet counts per job.
     
     return sorted_jobs
+
+
+def generate_job_entry_fast(
+    persona: Dict[str, Any],
+    occupation_doc: Dict[str, Any],
+    period: Dict[str, Any],
+    job_index: int,
+    total_jobs: int,
+    used_companies: List[str],
+    language: str = "de"
+) -> Dict[str, Any]:
+    """
+    Generate a single job entry WITHOUT bullets (fast version).
+    Bullets are generated separately in batch.
+    
+    Args:
+        persona: Persona dictionary.
+        occupation_doc: Occupation document.
+        period: Timeline period for this job.
+        job_index: Index of this job (0 = oldest, total_jobs-1 = current).
+        total_jobs: Total number of jobs.
+        used_companies: List of already used company names.
+        language: Language (de, fr, it).
+    
+    Returns:
+        Job entry dictionary (without responsibilities).
+    """
+    is_current = period.get("is_current", False)
+    
+    # Determine career level for this job
+    career_level = persona.get("career_level", "mid")
+    if is_current:
+        job_career_level = career_level
+    else:
+        if total_jobs == 2:
+            job_career_level = "junior" if job_index == 0 else career_level
+        elif total_jobs == 3:
+            job_career_level = ["junior", "mid", career_level][min(job_index, 2)]
+        else:
+            levels = ["junior", "mid", "senior", career_level]
+            job_career_level = levels[min(job_index, 3)]
+    
+    # Store career level in period for later use
+    period["career_level"] = job_career_level
+    
+    # Get company
+    canton = persona.get("canton", "ZH")
+    occupation_title = persona.get("occupation", "")
+    
+    company, match_quality = get_valid_company_for_occupation(
+        occupation_doc, canton, occupation_title,
+        max_attempts=5, used_companies=used_companies
+    )
+    
+    company_name = company.get("name", "Company AG")
+    used_companies.append(company_name)
+    
+    # Get position title
+    used_titles = [j for j in used_companies if isinstance(j, str)]
+    position, _ = get_career_progression_title(
+        occupation_doc, job_career_level,
+        job_index=job_index, total_jobs=total_jobs,
+        is_current_job=is_current, used_titles=used_titles
+    )
+    
+    # Get technologies
+    job_id = persona.get("job_id")
+    if is_current:
+        technologies = get_technologies_from_skills(job_id, limit=8)
+    else:
+        years_ago = datetime.now().year - period.get("end_year", datetime.now().year)
+        current_techs = get_technologies_from_skills(job_id, limit=8)
+        technologies = get_older_technologies(current_techs, years_ago)
+    
+    return {
+        "company": company_name,
+        "position": position,
+        "location": canton,
+        "start_date": f"{period['start_year']}-{period['start_month']:02d}",
+        "end_date": None if is_current else f"{period['end_year']}-{period['end_month']:02d}",
+        "is_current": is_current,
+        "responsibilities": [],  # Will be filled by batch generation
+        "technologies": technologies,
+        "category": persona.get("industry", "other"),
+        "company_match_quality": match_quality
+    }
 
 
 def generate_job_entry(
@@ -453,7 +555,7 @@ def generate_job_entry(
     language: str = "de"
 ) -> Dict[str, Any]:
     """
-    Generate a single job entry with high quality.
+    Generate a single job entry with high quality (legacy, slower).
     
     Args:
         persona: Persona dictionary.
@@ -472,13 +574,18 @@ def generate_job_entry(
     gap_type = period.get("gap_type")
     
     # Handle gap fillers
+    # REMOVE "Verschiedene Positionen" - use specific gap types only
     if is_gap:
         gap_names = {
             "weiterbildung": "Weiterbildung / Fortbildung",
             "freelance": "Freelance-Projekte",
             "elternzeit": "Elternzeit",
-            "verschiedene_positionen": f"Verschiedene Positionen in {persona.get('industry', 'verschiedenen Bereichen')}"
+            "sabbatical": "Sabbatical"
         }
+        
+        # Never use "verschiedene_positionen" - replace with sabbatical
+        if gap_type == "verschiedene_positionen":
+            gap_type = "sabbatical"
         
         return {
             "company": gap_names.get(gap_type, "Weiterbildung"),
@@ -517,35 +624,37 @@ def generate_job_entry(
             else:
                 job_career_level = career_level
     
-    # Get company with industry validation
+    # Get company with STRICT occupation-to-industry validation
     canton = persona.get("canton", "ZH")
-    industry = persona.get("industry", "other")
-    occupation_industry = industry  # Assume occupation matches persona industry
+    occupation_title = persona.get("occupation", persona.get("current_title", ""))
     
-    # Try to get occupation industry from document
-    if occupation_doc:
-        # Try to infer industry from berufsfeld
-        berufsfelder = occupation_doc.get("categories", {}).get("berufsfelder", [])
-        if berufsfelder:
-            # Use industry mapping if available
-            from src.data.models import Industry
-            # For now, use persona industry
-            occupation_industry = industry
-    
-    company, match_quality = get_realistic_company_for_job(
-        canton, industry, occupation_industry,
-        attempt=0, used_companies=used_companies
+    # Use company_validator for proper occupation-to-industry mapping
+    company, match_quality = get_valid_company_for_occupation(
+        occupation_doc,
+        canton,
+        occupation_title,
+        max_attempts=5,
+        used_companies=used_companies
     )
     
     company_name = company.get("name", "Company AG")
     used_companies.append(company_name)
     
-    # Get position title
-    occupation_title = persona.get("occupation", persona.get("current_title", "Engineer"))
-    position = get_career_level_title(occupation_title, job_career_level, avoid_repetition=True)
+    # Get position title with REALISTIC CAREER PROGRESSION from database
+    # Uses related occupations from same Berufsfeld with appropriate Bildungstyp
+    # Jobs are chronologically ordered: index 0 = oldest, highest = current
+    used_titles = [j.get("position", "") for j in used_companies if isinstance(j, dict)]
+    position, position_job_id = get_career_progression_title(
+        occupation_doc,
+        job_career_level,
+        job_index=job_index,
+        total_jobs=total_jobs,
+        is_current_job=is_current,
+        used_titles=used_titles
+    )
     
-    # Get responsibilities
-    job_id = persona.get("job_id")
+    # Get responsibilities - use position_job_id for more relevant activities
+    job_id = position_job_id if position_job_id else persona.get("job_id")
     activities = get_activities_by_occupation(job_id) if job_id else []
     
     # Get industry and years in position
@@ -558,7 +667,8 @@ def generate_job_entry(
         responsibilities = generate_responsibilities_from_activities(
             job_id, job_career_level, company_name, language,
             num_bullets=num_bullets, is_current_job=True,
-            industry=industry, years_in_position=years_in_position
+            industry=industry, years_in_position=years_in_position,
+            occupation_title=position
         )
     else:
         # Previous jobs: 2-3 bullets (decreasing for older)
@@ -566,7 +676,8 @@ def generate_job_entry(
         responsibilities = generate_responsibilities_from_activities(
             job_id, job_career_level, company_name, language,
             num_bullets=num_bullets, is_current_job=False,
-            industry=industry, years_in_position=years_in_position
+            industry=industry, years_in_position=years_in_position,
+            occupation_title=position
         )
     
     # Clean responsibilities
@@ -610,53 +721,6 @@ def generate_job_entry(
         "category": industry,
         "company_match_quality": match_quality
     }
-
-
-def get_career_level_title(base_title: str, career_level: str, avoid_repetition: bool = True) -> str:
-    """
-    Add career level prefix to occupation title, avoiding repetition.
-    
-    Args:
-        base_title: Base occupation title.
-        career_level: Career level (junior, mid, senior, lead).
-        avoid_repetition: Avoid adding prefix if already present.
-    
-    Returns:
-        Title with career level prefix.
-    """
-    base_lower = base_title.lower()
-    
-    if career_level == "junior":
-        # Check if already has junior prefix
-        if "junior" in base_lower or "trainee" in base_lower:
-            return base_title
-        return base_title  # Junior typically no prefix
-    
-    elif career_level == "mid":
-        # Check if already has mid/senior/lead prefix
-        if any(prefix in base_lower for prefix in ["senior", "lead", "leiter", "manager"]):
-            return base_title
-        return base_title  # Mid typically no prefix
-    
-    elif career_level == "senior":
-        # Check if already has senior prefix
-        if "senior" in base_lower:
-            return base_title
-        if "lead" in base_lower or "leiter" in base_lower:
-            # Already higher level, keep as is
-            return base_title
-        return f"Senior {base_title}"
-    
-    elif career_level == "lead":
-        # Check if already has lead/leiter prefix
-        if "leiter" in base_lower or "lead" in base_lower or "manager" in base_lower:
-            return base_title
-        if "senior" in base_lower:
-            # Replace senior with lead
-            return base_title.replace("Senior", "Leiter").replace("Senior", "Lead")
-        return f"Leiter {base_title}" if random.random() < 0.5 else f"Lead {base_title}"
-    
-    return base_title
 
 
 def get_older_technologies(technologies: List[str], years_ago: int) -> List[str]:
@@ -737,7 +801,11 @@ def get_technologies_from_skills(job_id: Optional[str], limit: int = 8) -> List[
 
 def generate_job_history(
     persona: Dict[str, Any],
-    occupation_doc: Optional[Dict[str, Any]] = None
+    occupation_doc: Optional[Dict[str, Any]] = None,
+    language: str = "de",
+    education_start_year: Optional[int] = None,
+    education_duration_years: Optional[int] = None,
+    bildungstyp: str = ""
 ) -> List[Dict[str, Any]]:
     """
     Generate job history for a persona with realistic timeline and quality.
@@ -784,19 +852,53 @@ def generate_job_history(
             "category": persona.get("industry", "other")
         }]
     
-    # Calculate education end year (approximate)
-    education_end_year = datetime.now().year - years_experience - persona_age + 18
-    if education_end_year < 2000:
-        education_end_year = 2000
+    # Use FORWARD timeline calculation from cv_timeline_validator
+    # If education parameters not provided, calculate approximate values
+    if education_start_year is None or education_duration_years is None:
+        # Fallback: approximate from persona age and experience
+        current_year = datetime.now().year
+        education_end_age = persona_age - years_experience
+        if education_end_age < 15:
+            education_end_age = 15
+        education_end_year = current_year - (persona_age - education_end_age)
+        if education_duration_years is None:
+            education_duration_years = 3  # Default for EFZ
+        if education_start_year is None:
+            education_start_year = education_end_year - education_duration_years
+            if education_start_year < 1980:
+                education_start_year = 1980
+                education_duration_years = education_end_year - education_start_year
     
-    # Calculate realistic timeline
-    periods = calculate_realistic_job_timeline(
-        persona_age, years_experience, education_end_year
+    # Get bildungstyp from occupation if not provided
+    if not bildungstyp and occupation_doc:
+        ausbildung = occupation_doc.get("ausbildung", {})
+        if isinstance(ausbildung, dict):
+            bildungstyp = ausbildung.get("bildungstyp", "")
+    
+    # Calculate timeline FORWARD (never backwards from future dates)
+    periods, timeline_issues = calculate_timeline_forward(
+        persona_age,
+        years_experience,
+        education_start_year,
+        education_duration_years,
+        bildungstyp
     )
     
-    # Generate job entries
+    # If timeline validation failed, fall back to old method (but log warning)
+    if not periods and timeline_issues:
+        # Log warning but continue with fallback
+        import warnings
+        warnings.warn(f"Timeline validation failed: {len(timeline_issues)} issues. Using fallback calculation.")
+        # Fallback: use old method (but this should rarely happen)
+        education_end_year = education_start_year + education_duration_years
+        periods = calculate_realistic_job_timeline(
+            persona_age, years_experience, education_end_year
+        )
+    
+    # PHASE 1: Generate job entries WITHOUT bullets (fast)
     job_history = []
     used_companies = []
+    real_jobs_data = []  # Collect data for batch bullet generation
     
     for i, period in enumerate(periods):
         if period.get("is_gap", False):
@@ -805,9 +907,12 @@ def generate_job_history(
                 "weiterbildung": "Weiterbildung / Fortbildung",
                 "freelance": "Freelance-Projekte",
                 "elternzeit": "Elternzeit",
-                "verschiedene_positionen": f"Verschiedene Positionen in {persona.get('industry', 'verschiedenen Bereichen')}"
+                "sabbatical": "Sabbatical"
             }
             gap_type = period.get("gap_type", "weiterbildung")
+            
+            if gap_type == "verschiedene_positionen":
+                gap_type = "sabbatical"
             
             job_entry = {
                 "company": gap_names.get(gap_type, "Weiterbildung"),
@@ -821,16 +926,48 @@ def generate_job_history(
                 "category": "gap_filler"
             }
         else:
-            # Generate real job entry
-            job_entry = generate_job_entry(
+            # Generate job entry WITHOUT bullets first
+            job_entry = generate_job_entry_fast(
                 persona, occupation_doc, period, i, len(periods),
                 used_companies, language
             )
+            
+            # Determine number of bullets needed
+            is_current = (i == len(periods) - 1)
+            if is_current:
+                num_bullets = random.randint(4, 5)
+            else:
+                num_bullets = max(2, 4 - i)
+            
+            # Collect data for batch bullet generation
+            real_jobs_data.append({
+                "job_index": len(job_history),  # Track position in job_history
+                "position": job_entry.get("position", ""),
+                "career_level": period.get("career_level", persona.get("career_level", "mid")),
+                "company": job_entry.get("company", ""),
+                "activities": extract_activities_from_occupation(persona.get("job_id")),
+                "num_bullets": num_bullets
+            })
         
         job_history.append(job_entry)
     
+    # PHASE 2: Generate ALL bullets in ONE API call (fast!)
+    if real_jobs_data:
+        occupation_title = persona.get("occupation", occupation_doc.get("title", ""))
+        all_bullets = generate_all_jobs_bullets_batch(real_jobs_data, occupation_title, language)
+        
+        # Assign bullets to jobs
+        for job_data in real_jobs_data:
+            job_idx = job_data["job_index"]
+            bullets = all_bullets.get(real_jobs_data.index(job_data), [])
+            if bullets:
+                job_history[job_idx]["responsibilities"] = bullets
+    
     # Ensure logical progression
     job_history = ensure_logical_progression(job_history, persona.get("career_level", "mid"))
+    
+    # Remove "Verschiedene Positionen" entries (NOT a company)
+    job_history = remove_verschiedene_positionen_entries(job_history)
     
     # Sort by start_date (most recent first for CV display)
     job_history.sort(

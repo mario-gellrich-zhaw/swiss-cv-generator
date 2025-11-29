@@ -157,6 +157,188 @@ def get_occupation_by_id(job_id: str) -> Optional[Dict[str, Any]]:
     return collection.find_one({"job_id": job_id})
 
 
+# Bildungstyp hierarchy for career levels
+BILDUNGSTYP_HIERARCHY = {
+    "Grundbildung (Lehre)": 0,  # Junior
+    "Berufsfunktion / Spezialisierung": 1,  # Mid
+    "Berufsfunktion / Spezialisierung - Weiterbildungsberuf": 1,
+    "Weiterbildungsberuf": 2,  # Senior
+    "Berufsfunktion / Spezialisierung - Hochschulberuf": 2,
+    "Hochschulberuf - Weiterbildungsberuf": 2,
+    "Hochschulberuf": 3,  # Lead
+}
+
+CAREER_LEVEL_TO_BILDUNG = {
+    "junior": 0,
+    "mid": 1,
+    "senior": 2,
+    "lead": 3,
+}
+
+
+def get_related_occupations_by_berufsfeld(
+    berufsfelder: List[str],
+    target_career_level: str,
+    exclude_job_ids: List[str] = None,
+    limit: int = 10
+) -> List[Dict[str, Any]]:
+    """
+    Find related occupations in the same Berufsfeld with appropriate Bildungstyp.
+    
+    This enables realistic career progression - e.g., a Koch EFZ (Junior) 
+    can progress to Küchenchef (Senior) within Gastgewerbe.
+    
+    Args:
+        berufsfelder: List of berufsfelder to search in.
+        target_career_level: Target career level (junior, mid, senior, lead).
+        exclude_job_ids: Job IDs to exclude (already used).
+        limit: Maximum results.
+    
+    Returns:
+        List of related occupation documents.
+    """
+    db_manager = get_db_manager()
+    db_manager.connect()
+    collection = db_manager.get_source_collection(settings.mongodb_collection_occupations)
+    
+    if not berufsfelder:
+        return []
+    
+    # Normalize berufsfelder
+    if isinstance(berufsfelder, str):
+        berufsfelder = [berufsfelder]
+    
+    # Get target bildungstyp level
+    target_level = CAREER_LEVEL_TO_BILDUNG.get(target_career_level, 1)
+    
+    # Find bildungstypen for this level
+    matching_bildungstypen = [
+        bt for bt, level in BILDUNGSTYP_HIERARCHY.items()
+        if level == target_level
+    ]
+    
+    # Build query
+    query = {
+        "categories.berufsfelder": {"$in": berufsfelder},
+        "data_completeness.completeness_score": {"$gte": 0.7}
+    }
+    
+    if matching_bildungstypen:
+        query["categories.bildungstypen"] = {"$in": matching_bildungstypen}
+    
+    if exclude_job_ids:
+        query["job_id"] = {"$nin": exclude_job_ids}
+    
+    # Find occupations
+    occupations = list(collection.find(query).limit(limit))
+    
+    return occupations
+
+
+def get_career_progression_title(
+    base_occupation_doc: Dict[str, Any],
+    target_career_level: str,
+    job_index: int = 0,
+    total_jobs: int = 1,
+    is_current_job: bool = False,
+    used_titles: List[str] = None
+) -> Tuple[str, Optional[str]]:
+    """
+    Get an appropriate job title for a career progression step.
+    
+    Jobs are ordered chronologically (oldest first, current last).
+    Ensures realistic progression within the SAME or closely related Berufsfeld.
+    
+    Args:
+        base_occupation_doc: The base occupation document.
+        target_career_level: Target career level for this specific job.
+        job_index: Index of job in chronological order (0=oldest, higher=newer).
+        total_jobs: Total number of jobs.
+        is_current_job: Whether this is the current (most recent) job.
+        used_titles: Already used titles to avoid repetition.
+    
+    Returns:
+        Tuple of (title, job_id or None if modified).
+    """
+    if used_titles is None:
+        used_titles = []
+    
+    base_title = base_occupation_doc.get("title", "Fachperson")
+    base_job_id = base_occupation_doc.get("job_id")
+    berufsfelder = base_occupation_doc.get("categories", {}).get("berufsfelder", [])
+    
+    if isinstance(berufsfelder, str):
+        berufsfelder = [berufsfelder]
+    
+    # For CURRENT job (the most recent), always use base title
+    if is_current_job:
+        title = _add_career_prefix(base_title, target_career_level)
+        return title, base_job_id
+    
+    # For PREVIOUS jobs (older), try to find related occupation in SAME Berufsfeld
+    # Priority: Same Berufsfeld > Related Berufsfeld > Base title with prefix
+    
+    # Try to find strictly related occupations
+    related = get_related_occupations_by_berufsfeld(
+        berufsfelder,
+        target_career_level,
+        exclude_job_ids=[base_job_id] if base_job_id else [],
+        limit=30
+    )
+    
+    # Filter out already used titles and ensure same Berufsfeld
+    available = []
+    for occ in related:
+        occ_title = occ.get("title", "")
+        occ_berufsfelder = occ.get("categories", {}).get("berufsfelder", [])
+        if isinstance(occ_berufsfelder, str):
+            occ_berufsfelder = [occ_berufsfelder]
+        
+        # Check if at least one Berufsfeld overlaps
+        if not any(bf in berufsfelder for bf in occ_berufsfelder):
+            continue
+        
+        # Check title not already used
+        if occ_title.lower() in [t.lower() for t in used_titles]:
+            continue
+        
+        available.append(occ)
+    
+    if available:
+        # Pick a random related occupation from same Berufsfeld
+        chosen = random.choice(available)
+        title = _add_career_prefix(chosen.get("title", base_title), target_career_level)
+        return title, chosen.get("job_id")
+    
+    # Fallback: use base title with prefix (stay in same field)
+    title = _add_career_prefix(base_title, target_career_level)
+    return title, base_job_id
+
+
+def _add_career_prefix(title: str, career_level: str) -> str:
+    """Add career level prefix to title if appropriate."""
+    title_lower = title.lower()
+    
+    # Don't add prefix if already present
+    if any(prefix in title_lower for prefix in ["senior", "junior", "lead", "leiter", "chef", "meister"]):
+        return title
+    
+    if career_level == "junior":
+        # Junior: no prefix, just base title
+        return title
+    elif career_level == "mid":
+        # Mid: no prefix
+        return title
+    elif career_level == "senior":
+        return f"Senior {title}"
+    elif career_level == "lead":
+        # Vary between Lead/Leiter/Chef
+        prefixes = ["Leiter/in", "Lead", "Chef/in"]
+        return f"{random.choice(prefixes)} {title}"
+    
+    return title
+
+
 def sample_occupation_by_industry(industry: str) -> Optional[Dict[str, Any]]:
     """Sample occupation by industry from source_db."""
     db_manager = get_db_manager()
