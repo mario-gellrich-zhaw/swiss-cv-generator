@@ -63,10 +63,13 @@ def export_cv_pdf(cv_doc: CVDocument, output_path: Path, template_name: Optional
         
         # Use template system
         template = template_name or "classic"
-        available = get_available_templates()
-        if template not in available:
-            template = "classic"
-        
+
+        # Don't validate "random" - let render_cv_with_template handle it
+        if template != "random":
+            available = get_available_templates()
+            if template not in available:
+                template = "classic"
+
         render_cv_with_template(cv_doc, str(output_path), template)
         return output_path
         
@@ -654,19 +657,23 @@ def generate(
                 # Export formats
                 if format in ('pdf', 'both'):
                     pdf_path = industry_dir / f"{filename_base}.pdf"
-                    export_cv_pdf(cv_doc, pdf_path)
+                    # Use random template for variety
+                    from src.export.pdf_templates import get_random_template
+                    chosen_template = get_random_template()
+                    export_cv_pdf(cv_doc, pdf_path, template_name=chosen_template)
                     if verbose:
-                        console.print(f"[green]✓ PDF: {pdf_path}[/green]")
-                
+                        console.print(f"[green]✓ PDF ({chosen_template}): {pdf_path}[/green]")
+
                 if format in ('docx', 'both'):
                     docx_path = industry_dir / f"{filename_base}.docx"
                     export_cv_docx(cv_doc, docx_path)
                     if verbose:
                         console.print(f"[green]✓ DOCX: {docx_path}[/green]")
-                
-                # Export metadata JSON
-                json_path = industry_dir / f"{filename_base}.json"
-                export_cv_json(cv_doc, json_path)
+
+                # Export metadata JSON only if requested
+                if format == 'both':
+                    json_path = industry_dir / f"{filename_base}.json"
+                    export_cv_json(cv_doc, json_path)
                 
                 # Update statistics
                 stats["total_generated"] += 1

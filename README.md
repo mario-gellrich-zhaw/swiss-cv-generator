@@ -6,6 +6,34 @@ A comprehensive system for generating realistic, demographically authentic Swiss
 
 The Swiss CV Generator produces high-quality curriculum vitae documents based on real Swiss demographic distributions, occupational data, and industry standards. The system combines data from the Swiss Federal Statistical Office (BFS) and scraped occupational information from berufsberatung.ch to create authentic CV profiles.
 
+## Quick Start
+
+Generate 50 CVs in German with random professional designs:
+
+```bash
+# Clone and setup
+git clone <repository-url>
+cd swiss-cv-generator
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+# Setup database (one-time)
+python scripts/setup_complete_database.py
+
+# Generate CVs
+python -m src.cli.main generate \
+  --count 50 \
+  --language de \
+  --format pdf \
+  --output-dir output/my_cvs \
+  --verbose
+```
+
+Output: 50 professional CVs with random designs (classic, modern, minimal, timeline) in `output/my_cvs/de/all/`
+
+For detailed setup and generation options, see [Installation](#installation) and [CV Generation](#cv-generation) sections below.
+
 ## Architecture
 
 ### Project Structure
@@ -255,22 +283,137 @@ python -m src.cli.main generate [OPTIONS]
 | `--min-quality-score` | Minimum quality score (0-100) | 80.0 |
 | `--verbose, -v` | Detailed logging | False |
 
-**Examples:**
+### Quick Start Examples
 
-Generate 10 technology CVs in German:
+**Generate CVs with Random Designs:**
+
+The system automatically selects from 4 different professional CV templates (classic, modern, minimal, timeline) for variety.
+
+Generate 50 CVs in German with random designs (PDF only):
 ```bash
-python -m src.cli.main generate --count 10 --industry technology --language de
+python -m src.cli.main generate \
+  --count 50 \
+  --language de \
+  --format pdf \
+  --output-dir output/my_cvs \
+  --verbose
 ```
 
-Generate 50 senior-level CVs with quality validation:
+Generate 100 CVs in French with random designs:
 ```bash
-python -m src.cli.main generate --count 50 --career-level senior --min-quality-score 85
+python -m src.cli.main generate \
+  --count 100 \
+  --language fr \
+  --format pdf \
+  --output-dir output/cvs_fr
 ```
 
-Generate French-language CVs for age group 26-40:
+Generate 25 CVs in Italian with both PDF and JSON:
 ```bash
-python -m src.cli.main generate --count 20 --language fr --age-group 26-40
+python -m src.cli.main generate \
+  --count 25 \
+  --language it \
+  --format both \
+  --output-dir output/cvs_it
 ```
+
+**Industry-Specific Generation:**
+
+Generate 30 technology CVs in German:
+```bash
+python -m src.cli.main generate \
+  --count 30 \
+  --industry technology \
+  --language de \
+  --output-dir output/tech_cvs
+```
+
+Generate 20 finance CVs in French:
+```bash
+python -m src.cli.main generate \
+  --count 20 \
+  --industry finance \
+  --language fr \
+  --output-dir output/finance_cvs
+```
+
+**Career Level Filtering:**
+
+Generate 40 senior-level CVs:
+```bash
+python -m src.cli.main generate \
+  --count 40 \
+  --career-level senior \
+  --language de \
+  --output-dir output/senior_cvs
+```
+
+Generate 15 junior CVs with high quality threshold:
+```bash
+python -m src.cli.main generate \
+  --count 15 \
+  --career-level junior \
+  --min-quality-score 90 \
+  --output-dir output/junior_cvs
+```
+
+**Age Group Targeting:**
+
+Generate 35 CVs for young professionals (26-40 years):
+```bash
+python -m src.cli.main generate \
+  --count 35 \
+  --age-group 26-40 \
+  --language de \
+  --output-dir output/young_professionals
+```
+
+**Complete Example with All Options:**
+```bash
+python -m src.cli.main generate \
+  --count 50 \
+  --industry technology \
+  --language de \
+  --career-level senior \
+  --age-group 41-65 \
+  --format pdf \
+  --output-dir output/tech_senior_cvs \
+  --validate-timeline \
+  --validate-quality \
+  --min-quality-score 85 \
+  --verbose
+```
+
+### Output Structure
+
+Generated CVs are organized by language and industry:
+
+```
+output/
+└── my_cvs/
+    └── de/
+        └── all/  # or specific industry name
+            ├── Müller_Anna_21324_20251214_120000.pdf
+            ├── Meier_Hans_21325_20251214_120005.pdf
+            └── ...
+```
+
+Each CV filename contains:
+- Last name
+- First name
+- Job ID
+- Timestamp (YYYYMMDD_HHMMSS)
+
+### Available Templates
+
+The system uses 4 different professional templates, randomly selected for each CV:
+
+1. **Classic**: Traditional two-column layout with blue accent
+2. **Modern**: Contemporary design with dark sidebar and green accent
+3. **Minimal**: Clean, minimalist design
+4. **Timeline**: Timeline-based layout
+
+This ensures visual variety across generated CVs while maintaining professional standards.
 
 ### Programmatic Usage
 
