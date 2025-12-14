@@ -70,7 +70,7 @@ def main():
     # Paths
     script_dir = Path(__file__).parent
     project_root = script_dir.parent
-    input_file = project_root / "mario_daten" / "berufsberatung_occupations_de.json"
+    input_file = project_root / "data" / "source" / "berufsberatung_occupations_de.json"
     output_file = project_root / "data" / "processed" / "occupations.json"
     
     # Ensure output directory exists

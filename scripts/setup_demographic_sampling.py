@@ -37,7 +37,7 @@ def load_demographic_data() -> Dict[str, Any]:
     Returns:
         Dictionary with demographic data.
     """
-    demo_file = project_root / "mario_daten" / "Bevölkerungsdaten.json"
+    demo_file = project_root / "data" / "source" / "Bevölkerungsdaten.json"
     
     if not demo_file.exists():
         console.print(f"[red]❌ Demographic data file not found: {demo_file}[/red]")

@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  mongo:
+    image: mongo:7
+    container_name: CV_DATA
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: CV_DATA
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand(\"ping\")' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data:
+    driver: local
+

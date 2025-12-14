@@ -1,6 +1,0 @@
-﻿{
-  "ZH": {"name": "Zürich", "language": "de", "weight": 1.0},
-  "BE": {"name": "Bern", "language": "de", "weight": 0.6},
-  "GE": {"name": "Genf", "language": "fr", "weight": 0.4},
-  "TI": {"name": "Ticino", "language": "it", "weight": 0.15}
-  }

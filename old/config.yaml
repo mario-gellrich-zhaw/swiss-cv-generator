@@ -1,8 +1,0 @@
-﻿# config.yaml - replace defaults with SFSO-derived distributions where available
-default:
-  canton_distribution_source: data/cantons.csv
-  company_source: data/companies.csv
-  occupations_source: data/occupations.json
-  default_education_end_age: 22
-  phone_prefixes: ['076','077','078','079']
-  email_domains: ['example.ch']

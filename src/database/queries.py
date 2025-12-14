@@ -94,7 +94,7 @@ def _load_industry_percentages() -> Dict[str, float]:
     
     # Load from demographics.json or Branchenverteilung.json
     demo_file = Path(__file__).parent.parent.parent / "data" / "demographics.json"
-    branch_file = Path(__file__).parent.parent.parent / "mario_daten" / "Branchenverteilung.json"
+    branch_file = Path(__file__).parent.parent.parent / "data" / "source" / "Branchenverteilung.json"
     
     _industry_percentages_cache = {}
     

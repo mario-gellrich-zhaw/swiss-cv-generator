@@ -66,7 +66,7 @@ def load_demographic_data() -> Dict[str, Any]:
     Returns:
         Dictionary with demographic data.
     """
-    demo_file = project_root / "mario_daten" / "Bevölkerungsdaten.json"
+    demo_file = project_root / "data" / "source" / "Bevölkerungsdaten.json"
     
     if not demo_file.exists():
         console.print(f"[yellow]⚠️  Demographic data file not found: {demo_file}[/yellow]")
@@ -85,7 +85,7 @@ def load_branch_data() -> Dict[str, float]:
     Returns:
         Dictionary mapping branch name to percentage.
     """
-    branch_file = project_root / "mario_daten" / "Branchenverteilung.json"
+    branch_file = project_root / "data" / "source" / "Branchenverteilung.json"
     
     if not branch_file.exists():
         console.print(f"[yellow]⚠️  Branch data file not found: {branch_file}[/yellow]")

@@ -1,19 +1,42 @@
-asyncio
+# Core Framework
 click>=8.0
-jinja2>=3.0
-jsonschema
-openai>=0.27
-pandas
-pydantic
-pydantic>=1.10
-pydantic>=1.10,<2
-pytest
-python-dotenv>=1.0.0
-pydantic-settings>=2.0.0
-pymongo>=4.6.0
-requests
-rich>=13.0
-typer
 typer>=0.9.0
-weasyprint>=55.0   # optional: if WeasyPrint is hard to install, use HTML output fallback
-reportlab>=4.0    # PDF generation with ReportLab (used for CV export)
+rich>=13.0
+
+# Data Validation & Settings
+pydantic>=1.10,<2
+pydantic-settings>=2.0.0
+jsonschema
+
+# Database
+pymongo[srv]>=4.6.0
+
+# Web Scraping (for scraper/)
+requests>=2.31.0
+beautifulsoup4>=4.12.2
+
+# Template Rendering
+jinja2>=3.0
+
+# Data Processing
+pandas
+
+# PDF Generation
+reportlab>=4.0
+weasyprint>=55.0
+
+# Image Processing
+Pillow>=9.0.0
+
+# AI Integration
+openai>=0.27
+
+# Environment & Configuration
+python-dotenv>=1.0.0
+
+# Development & Testing
+pytest
+pytest-cov
+black
+pylint
+mypy

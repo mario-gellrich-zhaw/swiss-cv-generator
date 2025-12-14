@@ -1,6 +1,0 @@
-﻿{
-  ""occupations"": [
-    { ""code"": ""sw_eng"", ""title"": {""de"": ""Software Engineer"",""fr"": ""Ingénieur logiciel"",""it"": ""Ingegnere del software""}, ""industry"": ""technology"" },
-    { ""code"": ""analyst"", ""title"": {""de"": ""Business Analyst"",""fr"": ""Analyste d'entreprise"",""it"": ""Analista""}, ""industry"": ""finance"" }
-  ]
-}
