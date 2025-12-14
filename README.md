@@ -11,17 +11,26 @@ The Swiss CV Generator produces high-quality curriculum vitae documents based on
 Generate 50 CVs in German with random professional designs:
 
 ```bash
-# Clone and setup
+# 1. Clone and setup
 git clone <repository-url>
 cd swiss-cv-generator
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# Setup database (one-time)
+# 2. Configure MongoDB connection
+cp scraper/.env.example scraper/.env
+# Edit scraper/.env with your MongoDB credentials
+
+# 3. Run scraper to populate CV_DATA database (required first step!)
+cd scraper
+python job_scraper.py
+cd ..
+
+# 4. Setup database (one-time)
 python scripts/setup_complete_database.py
 
-# Generate CVs
+# 5. Generate CVs
 python -m src.cli.main generate \
   --count 50 \
   --language de \
@@ -31,6 +40,8 @@ python -m src.cli.main generate \
 ```
 
 Output: 50 professional CVs with random designs (classic, modern, minimal, timeline) in `output/my_cvs/de/all/`
+
+**Important:** The scraper (step 3) must be executed first to populate the CV_DATA database with occupational data from berufsberatung.ch. Without this data, the CV generation cannot work.
 
 For detailed setup and generation options, see [Installation](#installation) and [CV Generation](#cv-generation) sections below.
 
@@ -211,9 +222,35 @@ AI_RATE_LIMIT_DELAY=1.0
 
 ## Setup Process
 
-### 1. Database Initialization
+### 1. Data Scraping (REQUIRED - Must Run First!)
 
-Run the complete setup script:
+**This is the essential first step** - the scraper populates the CV_DATA database with occupational data that all subsequent steps depend on.
+
+```bash
+# Configure MongoDB connection
+cd scraper
+cp .env.example .env
+# Edit .env with your MongoDB credentials (URI and database name)
+
+# Run the scraper
+python job_scraper.py
+cd ..
+```
+
+The scraper will:
+- Extract all occupations from berufsberatung.ch (~1851 occupations)
+- Parse structured data (education, skills, requirements)
+- Store in MongoDB collection `cv_berufsberatung` in the CV_DATA database
+- Apply rate limiting (0.8-1.6s between requests)
+- Validate data completeness
+- Takes approximately 25-45 minutes to complete
+
+**Note:** This step must complete successfully before proceeding to database initialization.
+
+### 2. Database Initialization
+
+After the scraper has populated CV_DATA, run the complete setup script:
+
 ```bash
 python scripts/setup_complete_database.py
 ```
@@ -222,29 +259,13 @@ This script orchestrates:
 - Database connection validation
 - Collection creation with indexes
 - Demographic data import
-- Occupation data migration
+- Occupation data migration from CV_DATA to swiss_cv_generator
 - Name frequency data loading
 - Company directory setup
+- Portrait image organization
+- Skill extraction from occupational data
 
-### 2. Data Scraping (Optional)
-
-If you need to refresh occupational data:
-
-```bash
-# Ensure virtual environment is activated and dependencies installed
-cd scraper
-
-# Configure MongoDB in scraper/.env if needed
-# Then run:
-python job_scraper.py
-```
-
-The scraper will:
-- Extract all occupations from berufsberatung.ch
-- Parse structured data (education, skills, requirements)
-- Store in MongoDB collection `cv_berufsberatung`
-- Apply rate limiting (0.8-1.6s between requests)
-- Validate data completeness
+Estimated time: 5-10 minutes (excluding AI-powered steps)
 
 ### 3. Verify Setup
 
