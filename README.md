@@ -8,6 +8,43 @@ The Swiss CV Generator produces high-quality curriculum vitae documents based on
 
 ## Quick Start
 
+### Option 1: GitHub Codespaces (Recommended)
+
+The easiest way to get started is using GitHub Codespaces:
+
+1. **Open in Codespaces:**
+   - Click the green "Code" button on GitHub
+   - Select "Codespaces" tab
+   - Click "Create codespace on main"
+   - Wait for the container to build (2-3 minutes)
+
+2. **Automatic Setup:**
+   - The container automatically installs all dependencies
+   - MongoDB is pre-configured and running
+   - Python environment is ready to use
+
+3. **Initialize Database:**
+   ```bash
+   # CV_DATA is automatically imported from JSON file during Codespaces setup
+   # If needed, you can manually import it:
+   # python scripts/import_cv_data.py
+   
+   # Setup database (one-time)
+   python scripts/setup_complete_database.py
+   ```
+
+4. **Generate CVs:**
+   ```bash
+   python -m src.cli.main generate \
+     --count 50 \
+     --language de \
+     --format pdf \
+     --output-dir output/my_cvs \
+     --verbose
+   ```
+
+### Option 2: Local Setup
+
 Generate 50 CVs in German with random professional designs:
 
 ```bash
@@ -19,13 +56,15 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # 2. Configure MongoDB connection
-cp scraper/.env.example scraper/.env
-# Edit scraper/.env with your MongoDB credentials
+cp .env.example .env
+# Edit .env with your MongoDB credentials
 
-# 3. Run scraper to populate CV_DATA database (required first step!)
-cd scraper
-python job_scraper.py
-cd ..
+# 3. Import CV_DATA database (required first step!)
+# Option A: Import from JSON file (fast, recommended)
+python scripts/import_cv_data.py
+
+# Option B: Or run scraper to populate CV_DATA database
+# cd scraper && python job_scraper.py && cd ..
 
 # 4. Setup database (one-time)
 python scripts/setup_complete_database.py
@@ -41,7 +80,9 @@ python -m src.cli.main generate \
 
 Output: 50 professional CVs with random designs (classic, modern, minimal, timeline) in `output/my_cvs/de/all/`
 
-**Important:** The scraper (step 3) must be executed first to populate the CV_DATA database with occupational data from berufsberatung.ch. Without this data, the CV generation cannot work.
+**Important:** The CV_DATA database must be populated before CV generation can work. You can either:
+- Import from the included JSON file: `python scripts/import_cv_data.py` (fast, recommended)
+- Or run the scraper: `cd scraper && python job_scraper.py` (takes 25-45 minutes)
 
 For detailed setup and generation options, see [Installation](#installation) and [CV Generation](#cv-generation) sections below.
 
@@ -169,6 +210,35 @@ swiss-cv-generator/
 
 ### Installation
 
+#### GitHub Codespaces Setup
+
+1. **Open Repository in Codespaces:**
+   - Navigate to the repository on GitHub
+   - Click the green "Code" button
+   - Select "Codespaces" tab
+   - Click "Create codespace on main"
+
+2. **Wait for Container Build:**
+   - The devcontainer automatically:
+     - Installs Python 3.11
+     - Installs all Python dependencies
+     - Sets up MongoDB service
+     - Configures VS Code extensions
+     - Creates `.env` file with defaults
+     - **Imports CV_DATA database from JSON file** (if available)
+
+3. **Verify Setup:**
+   ```bash
+   # Test database connection
+   python scripts/test_db_connection.py
+   ```
+
+4. **Continue with [Setup Process](#setup-process) below**
+
+**Note:** The CV_DATA database is included as a JSON file (`data/CV_DATA.cv_berufsberatung.json`) and is automatically imported during Codespaces setup. You don't need to run the scraper!
+
+#### Local Setup
+
 1. Clone the repository:
 ```bash
 git clone <repository-url>
@@ -190,7 +260,7 @@ pip install -r requirements.txt
 
 **Option A: Local MongoDB with Docker**
 ```bash
-docker compose up -d
+docker compose -f scraper/docker-compose.yml up -d
 ```
 
 **Option B: MongoDB Atlas**
@@ -200,7 +270,12 @@ docker compose up -d
 
 5. Configure environment variables:
 
-Create `.env` file in project root:
+Create `.env` file in project root (or copy from `.env.example`):
+```bash
+cp .env.example .env
+```
+
+Edit `.env` file:
 ```env
 # MongoDB Configuration
 MONGODB_URI=mongodb://localhost:27017
@@ -222,9 +297,25 @@ AI_RATE_LIMIT_DELAY=1.0
 
 ## Setup Process
 
-### 1. Data Scraping (REQUIRED - Must Run First!)
+### 1. Data Import (REQUIRED - Must Run First!)
 
-**This is the essential first step** - the scraper populates the CV_DATA database with occupational data that all subsequent steps depend on.
+**Option A: Import from JSON File (Recommended for Codespaces)**
+
+The CV_DATA database is included as a JSON file in the repository (`data/CV_DATA.cv_berufsberatung.json`). This allows you to skip the scraper entirely:
+
+```bash
+# Import CV_DATA from JSON file
+python scripts/import_cv_data.py
+```
+
+This will:
+- Import all ~1851 occupations from the JSON file
+- Create necessary indexes
+- Takes only a few seconds
+
+**Option B: Run the Scraper (Alternative)**
+
+If you prefer to scrape fresh data from berufsberatung.ch:
 
 ```bash
 # Configure MongoDB connection
@@ -245,11 +336,11 @@ The scraper will:
 - Validate data completeness
 - Takes approximately 25-45 minutes to complete
 
-**Note:** This step must complete successfully before proceeding to database initialization.
+**Note:** Either import from JSON or run the scraper - you need one of these steps before proceeding to database initialization.
 
 ### 2. Database Initialization
 
-After the scraper has populated CV_DATA, run the complete setup script:
+After CV_DATA has been imported (from JSON) or populated (by scraper), run the complete setup script:
 
 ```bash
 python scripts/setup_complete_database.py
