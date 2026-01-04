@@ -4,7 +4,7 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/workspaces/swiss-cv-generator",
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
@@ -62,6 +62,7 @@
     "MONGODB_URI": "mongodb://localhost:27017",
     "MONGODB_DATABASE_SOURCE": "CV_DATA",
     "MONGODB_DATABASE_TARGET": "swiss_cv_generator",
-    "PYTHONPATH": "/workspace"
+    "PYTHONPATH": "/workspaces/swiss-cv-generator",
+    "WORKSPACE_DIR": "/workspaces/swiss-cv-generator"
   }
 }

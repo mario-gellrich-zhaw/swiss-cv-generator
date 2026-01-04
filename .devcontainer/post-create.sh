@@ -6,7 +6,9 @@ set +e
 echo "🚀 Setting up Swiss CV Generator in Codespaces..."
 
 # Always operate from workspace root
-cd /workspace || exit 1
+WORKSPACE_DIR=${WORKSPACE_DIR:-${WORKSPACE_FOLDER:-/workspaces/swiss-cv-generator}}
+echo "📁 Workspace directory: $WORKSPACE_DIR"
+cd "$WORKSPACE_DIR" || exit 1
 umask 0002
 
 # Start MongoDB in background
@@ -41,9 +43,9 @@ else
 fi
 
 # Create .env file if it doesn't exist
-if [ ! -f .env ]; then
+if [ ! -f "$WORKSPACE_DIR/.env" ]; then
     echo "📝 Creating .env file from template..."
-    cat > .env << EOF
+    cat > "$WORKSPACE_DIR/.env" << EOF
 # MongoDB Configuration
 MONGODB_URI=mongodb://localhost:27017
 MONGODB_DATABASE_SOURCE=CV_DATA
@@ -70,7 +72,14 @@ fi
 
 # Install package in development mode
 echo "📦 Installing package in development mode..."
-pip install -e /workspace
+if [ -f "$WORKSPACE_DIR/pyproject.toml" ] || [ -f "$WORKSPACE_DIR/setup.py" ]; then
+    pip install -e "$WORKSPACE_DIR"
+else
+    echo "⚠️  Warning: pyproject.toml not found at $WORKSPACE_DIR"
+    echo "   Listing directory contents:"
+    ls -la "$WORKSPACE_DIR"
+    exit 1
+fi
 
 # Verify installation
 echo "🔍 Verifying installation..."
