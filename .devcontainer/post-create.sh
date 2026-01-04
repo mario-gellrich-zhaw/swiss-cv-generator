@@ -77,15 +77,25 @@ else
     echo "ℹ️  .env file already exists, skipping..."
 fi
 
+# Install Python dependencies first
+echo "📦 Installing Python dependencies from requirements.txt..."
+if [ -f "$WORKSPACE_DIR/requirements.txt" ]; then
+    pip install -r "$WORKSPACE_DIR/requirements.txt"
+    echo "✅ Dependencies installed"
+else
+    echo "⚠️  requirements.txt not found"
+fi
+
 # Install package in development mode
 echo "📦 Installing package in development mode..."
 if [ -f "$WORKSPACE_DIR/pyproject.toml" ] || [ -f "$WORKSPACE_DIR/setup.py" ]; then
-    pip install -e "$WORKSPACE_DIR"
+    pip install -e "$WORKSPACE_DIR" || {
+        echo "⚠️  Package installation failed, but continuing..."
+    }
 else
     echo "⚠️  Warning: pyproject.toml not found at $WORKSPACE_DIR"
     echo "   Listing directory contents:"
     ls -la "$WORKSPACE_DIR"
-    exit 1
 fi
 
 # Verify installation
