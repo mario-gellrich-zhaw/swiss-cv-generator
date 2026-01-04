@@ -6,7 +6,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     build-essential \
     curl \
     git \
-    mongodb-database-tools \
+    gnupg \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Install MongoDB shell (mongosh)
