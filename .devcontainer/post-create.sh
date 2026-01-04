@@ -5,6 +5,10 @@ set +e
 
 echo "🚀 Setting up Swiss CV Generator in Codespaces..."
 
+# Always operate from workspace root
+cd /workspace || exit 1
+umask 0002
+
 # Start MongoDB in background
 echo "🔧 Starting MongoDB..."
 mkdir -p /tmp/mongodb/db
@@ -66,7 +70,7 @@ fi
 
 # Install package in development mode
 echo "📦 Installing package in development mode..."
-pip install -e .
+pip install -e /workspace
 
 # Verify installation
 echo "🔍 Verifying installation..."
