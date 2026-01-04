@@ -41,6 +41,7 @@ The easiest way to get started is using GitHub Codespaces:
    
    # Re-run database setup
    python scripts/setup_complete_database.py
+    # If canton/name generation failed earlier, adding the key and rerunning fixes it
    
    # Or use fallback for cantons (no API key needed):
    python scripts/load_cantons_fallback.py
