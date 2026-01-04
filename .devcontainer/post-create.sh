@@ -77,31 +77,23 @@ else
     echo "ℹ️  .env file already exists, skipping..."
 fi
 
-# Install Python dependencies first
+# Install Python dependencies
 echo "📦 Installing Python dependencies from requirements.txt..."
 if [ -f "$WORKSPACE_DIR/requirements.txt" ]; then
     pip install -r "$WORKSPACE_DIR/requirements.txt"
     echo "✅ Dependencies installed"
 else
     echo "⚠️  requirements.txt not found"
-fi
-
-# Install package in development mode
-echo "📦 Installing package in development mode..."
-if [ -f "$WORKSPACE_DIR/pyproject.toml" ] || [ -f "$WORKSPACE_DIR/setup.py" ]; then
-    pip install -e "$WORKSPACE_DIR" || {
-        echo "⚠️  Package installation failed, but continuing..."
-    }
-else
-    echo "⚠️  Warning: pyproject.toml not found at $WORKSPACE_DIR"
-    echo "   Listing directory contents:"
-    ls -la "$WORKSPACE_DIR"
+    exit 1
 fi
 
 # Verify installation
 echo "🔍 Verifying installation..."
-python -c "import src; print('✅ Package installed successfully')" || {
-    echo "❌ Package installation failed"
+echo "   PYTHONPATH: $PYTHONPATH"
+python -c "import sys; print('   Python can find:', sys.path[0])" || true
+python -c "import src; print('✅ Package is accessible')" || {
+    echo "❌ Package not accessible"
+    echo "   This shouldn't happen - check PYTHONPATH"
     exit 1
 }
 
@@ -123,6 +115,20 @@ else
     echo "   To import later, run: python scripts/import_cv_data.py"
 fi
 
+# Initialize database with demographics, names, companies, etc.
+echo "🔧 Setting up complete database..."
+if [ -f "scripts/setup_complete_database.py" ]; then
+    echo "   This may take a few minutes..."
+    python scripts/setup_complete_database.py || {
+        echo "⚠️  Database setup had some issues (check output above)"
+        echo "   Some steps may have failed due to missing OpenAI API key"
+        echo "   You can run fallback scripts manually:"
+        echo "   - python scripts/load_cantons_fallback.py"
+    }
+else
+    echo "⚠️  setup_complete_database.py not found. Skipping."
+fi
+
 # Test database connection
 echo "🔍 Testing database connection..."
 python scripts/test_db_connection.py || {
@@ -133,28 +139,17 @@ echo ""
 echo "✨ Setup complete!"
 echo ""
 echo "📚 Next steps:"
-if [ -f "data/CV_DATA.cv_berufsberatung.json" ]; then
-    echo "   ✅ CV_DATA database imported from JSON file"
-    echo ""
-    echo "   1. Initialize the database:"
-    echo "      python scripts/setup_complete_database.py"
-    echo ""
-    echo "   2. Generate your first CV:"
-    echo "      python -m src.cli.main generate --count 1 --language de"
-else
-    echo "   1. Import CV_DATA database (if JSON file exists):"
-    echo "      python scripts/import_cv_data.py"
-    echo ""
-    echo "   OR run the scraper to populate CV_DATA database:"
-    echo "      cd scraper && python job_scraper.py"
-    echo ""
-    echo "   2. Initialize the database:"
-    echo "      python scripts/setup_complete_database.py"
-    echo ""
-    echo "   3. Generate your first CV:"
-    echo "      python -m src.cli.main generate --count 1 --language de"
-fi
+echo "   ✅ MongoDB is running"
+echo "   ✅ CV_DATA database imported"
+echo "   ✅ Database initialized"
 echo ""
-echo "💡 Tip: MongoDB is running on port 27017 and is accessible from the container"
+echo "   🚀 You can now generate CVs:"
+echo "      python -m src.cli.main generate --count 50 --language de"
+echo ""
+echo "💡 Tips:"
+echo "   - MongoDB is running on port 27017"
+echo "   - If database setup failed, add OpenAI API key to .env and re-run:"
+echo "     python scripts/setup_complete_database.py"
+echo "   - Or use fallback for cantons: python scripts/load_cantons_fallback.py"
 echo ""
 

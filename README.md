@@ -16,29 +16,37 @@ The easiest way to get started is using GitHub Codespaces:
    - Click the green "Code" button on GitHub
    - Select "Codespaces" tab
    - Click "Create codespace on main"
-   - Wait for the container to build (3-5 minutes)
+   - Wait for the container to build (5-7 minutes)
 
-2. **Automatic Setup:**
+2. **MongoDB Extension Setup (Important!):**
+   During startup, VS Code will show a MongoDB popup asking for a connection string.
+   - **Enter:** `mongodb://localhost:27017`
+   - This allows the MongoDB extension to connect to the local database
+
+3. **Automatic Setup:**
    The container automatically:
    - ✅ Installs all dependencies (Python 3.11, MongoDB, etc.)
    - ✅ Starts MongoDB service
-   - ✅ Imports CV_DATA from JSON file
+   - ✅ Imports CV_DATA from JSON file (~1,851 occupations)
    - ✅ Creates `.env` configuration file
+   - ✅ **Initializes complete database** (demographics, cantons, etc.)
    - ✅ Tests database connection
 
-3. **Complete Setup (after container starts):**
+4. **Optional: Add OpenAI API Key**
+   If the automatic setup shows warnings about missing names/companies:
    ```bash
-   # Add your OpenAI API key to .env (optional but recommended)
-   # Open .env and add: OPENAI_API_KEY=sk-...
+   # Edit .env and add your OpenAI API key
+   nano .env
+   # Add: OPENAI_API_KEY=sk-...
    
-   # Initialize database with demographics, names, companies, etc.
+   # Re-run database setup
    python scripts/setup_complete_database.py
    
-   # If OpenAI key is not available, use fallback for cantons:
+   # Or use fallback for cantons (no API key needed):
    python scripts/load_cantons_fallback.py
    ```
 
-4. **Generate CVs:**
+5. **Generate CVs:**
    ```bash
    python -m src.cli.main generate \
      --count 50 \
@@ -48,10 +56,11 @@ The easiest way to get started is using GitHub Codespaces:
      --verbose
    ```
 
-**Note:** The Codespaces setup automatically handles:
+**Note:** The Codespaces setup is fully automated! After the container builds, everything is ready to generate CVs. The setup script runs automatically and includes:
 - MongoDB installation and startup
-- Python dependencies
+- Python dependencies installation
 - CV_DATA database import
+- Complete database initialization (cantons, demographics, etc.)
 - Environment configuration
 
 ### Option 2: Local Setup
