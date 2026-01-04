@@ -4,11 +4,18 @@
 set +e
 
 echo "🚀 Setting up Swiss CV Generator in Codespaces..."
+echo "📍 Current directory: $(pwd)"
+echo "📍 User: $(whoami)"
 
 # Always operate from workspace root
 WORKSPACE_DIR=${WORKSPACE_DIR:-${WORKSPACE_FOLDER:-/workspaces/swiss-cv-generator}}
 echo "📁 Workspace directory: $WORKSPACE_DIR"
-cd "$WORKSPACE_DIR" || exit 1
+echo "📂 Checking if directory exists..."
+ls -la "$WORKSPACE_DIR" || echo "❌ Directory not accessible!"
+
+cd "$WORKSPACE_DIR" || { echo "❌ Failed to cd to $WORKSPACE_DIR"; exit 1; }
+echo "✅ Changed to workspace directory"
+echo "📍 Now in: $(pwd)"
 umask 0002
 
 # Start MongoDB in background
