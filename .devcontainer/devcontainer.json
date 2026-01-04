@@ -55,8 +55,8 @@
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
-  "postStartCommand": "bash .devcontainer/post-start.sh",
+  "postCreateCommand": "bash /usr/local/bin/post-create.sh",
+  "postStartCommand": "bash /usr/local/bin/post-start.sh",
   "remoteUser": "vscode",
   "remoteEnv": {
     "MONGODB_URI": "mongodb://localhost:27017",

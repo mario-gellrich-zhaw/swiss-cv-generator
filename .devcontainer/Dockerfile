@@ -40,6 +40,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # Create MongoDB data directory
 RUN mkdir -p /data/db && chown -R vscode:vscode /data/db
+# Copy devcontainer scripts
+COPY .devcontainer/post-create.sh /usr/local/bin/post-create.sh
+COPY .devcontainer/post-start.sh /usr/local/bin/post-start.sh
+RUN chmod +x /usr/local/bin/post-create.sh /usr/local/bin/post-start.sh
+
 
 # Set Python path
 ENV PYTHONPATH=/workspace
