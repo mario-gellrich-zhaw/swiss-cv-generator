@@ -33,6 +33,14 @@ RUN pip install --no-cache-dir \
     mypy \
     pytest-cov
 
+# Install MongoDB server (not just shell)
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends mongodb-org-server \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# Create MongoDB data directory
+RUN mkdir -p /data/db && chown -R vscode:vscode /data/db
+
 # Set Python path
 ENV PYTHONPATH=/workspace
 

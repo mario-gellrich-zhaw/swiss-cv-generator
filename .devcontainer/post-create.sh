@@ -5,39 +5,33 @@ set +e
 
 echo "🚀 Setting up Swiss CV Generator in Codespaces..."
 
+# Start MongoDB in background
+echo "🔧 Starting MongoDB..."
+mkdir -p /tmp/mongodb/db
+mongod --dbpath /tmp/mongodb/db --logpath /tmp/mongodb/mongodb.log --fork --bind_ip_all
+
 # Wait for MongoDB to be ready
 echo "⏳ Waiting for MongoDB to be ready..."
-MAX_WAIT=60  # Maximum wait time in seconds
+MAX_WAIT=30  # Maximum wait time in seconds
 WAIT_COUNT=0
 
-# In Docker Compose, MongoDB is accessible via service name 'mongo'
-# Try both 'mongo' (Docker network) and 'localhost' (port forwarding)
 while [ $WAIT_COUNT -lt $MAX_WAIT ]; do
-    # Try connecting via service name first (Docker Compose network)
-    if mongosh --host mongo --quiet --eval "db.adminCommand('ping')" > /dev/null 2>&1; then
-        echo "✅ MongoDB is ready! (connected via service name 'mongo')"
-        break
-    fi
-    # Fallback: try localhost (port forwarding)
     if mongosh --quiet --eval "db.adminCommand('ping')" > /dev/null 2>&1; then
-        echo "✅ MongoDB is ready! (connected via localhost)"
+        echo "✅ MongoDB is ready!"
         break
     fi
     
     WAIT_COUNT=$((WAIT_COUNT + 2))
     if [ $((WAIT_COUNT % 10)) -eq 0 ]; then
         echo "   Still waiting... (${WAIT_COUNT}s / ${MAX_WAIT}s)"
-    else
-        echo "   MongoDB is not ready yet, waiting..."
     fi
     sleep 2
 done
 
 if [ $WAIT_COUNT -ge $MAX_WAIT ]; then
     echo "⚠️  MongoDB did not become ready within ${MAX_WAIT} seconds"
-    echo "   This is OK - you can start MongoDB manually later with:"
-    echo "   docker compose -f .devcontainer/docker-compose.yml up -d"
-    echo "   Then run: python scripts/import_cv_data.py"
+    echo "   You can start MongoDB manually with:"
+    echo "   mongod --dbpath /tmp/mongodb/db --logpath /tmp/mongodb/mongodb.log --fork --bind_ip_all"
 else
     echo "✅ MongoDB connection verified!"
 fi
@@ -84,10 +78,9 @@ python -c "import src; print('✅ Package installed successfully')" || {
 # Import CV_DATA if JSON file exists and MongoDB is ready
 if [ -f "data/CV_DATA.cv_berufsberatung.json" ]; then
     # Check if MongoDB is actually ready before importing
-    if mongosh --host mongo --quiet --eval "db.adminCommand('ping')" > /dev/null 2>&1 || \
-       mongosh --quiet --eval "db.adminCommand('ping')" > /dev/null 2>&1; then
+    if mongosh --quiet --eval "db.adminCommand('ping')" > /dev/null 2>&1; then
         echo "📥 Importing CV_DATA from JSON file..."
-        python scripts/import_cv_data.py --input data/CV_DATA.cv_berufsberatung.json || {
+        python scripts/import_cv_data.py || {
             echo "⚠️  CV_DATA import failed (you can run it manually later)"
             echo "   Run: python scripts/import_cv_data.py"
         }

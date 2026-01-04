@@ -16,21 +16,26 @@ The easiest way to get started is using GitHub Codespaces:
    - Click the green "Code" button on GitHub
    - Select "Codespaces" tab
    - Click "Create codespace on main"
-   - Wait for the container to build (2-3 minutes)
+   - Wait for the container to build (3-5 minutes)
 
 2. **Automatic Setup:**
-   - The container automatically installs all dependencies
-   - MongoDB is pre-configured and running
-   - Python environment is ready to use
+   The container automatically:
+   - ✅ Installs all dependencies (Python 3.11, MongoDB, etc.)
+   - ✅ Starts MongoDB service
+   - ✅ Imports CV_DATA from JSON file
+   - ✅ Creates `.env` configuration file
+   - ✅ Tests database connection
 
-3. **Initialize Database:**
+3. **Complete Setup (after container starts):**
    ```bash
-   # CV_DATA is automatically imported from JSON file during Codespaces setup
-   # If needed, you can manually import it:
-   # python scripts/import_cv_data.py
+   # Add your OpenAI API key to .env (optional but recommended)
+   # Open .env and add: OPENAI_API_KEY=sk-...
    
-   # Setup database (one-time)
+   # Initialize database with demographics, names, companies, etc.
    python scripts/setup_complete_database.py
+   
+   # If OpenAI key is not available, use fallback for cantons:
+   python scripts/load_cantons_fallback.py
    ```
 
 4. **Generate CVs:**
@@ -42,6 +47,12 @@ The easiest way to get started is using GitHub Codespaces:
      --output-dir output/my_cvs \
      --verbose
    ```
+
+**Note:** The Codespaces setup automatically handles:
+- MongoDB installation and startup
+- Python dependencies
+- CV_DATA database import
+- Environment configuration
 
 ### Option 2: Local Setup
 
