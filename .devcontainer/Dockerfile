@@ -17,7 +17,7 @@ RUN curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg -o /usr/s
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
-WORKDIR /workspace
+WORKDIR /workspaces/swiss-cv-generator
 
 # Copy requirements first for better caching
 COPY requirements.txt /tmp/requirements.txt

@@ -6,51 +6,46 @@
   },
   "workspaceFolder": "/workspaces/swiss-cv-generator",
   "features": {
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.11"
-    },
     "ghcr.io/devcontainers/features/git:1": {}
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
-		"ms-toolsai.jupyter",
-		"ms-azuretools.vscode-docker",
-		"ms-python.autopep8",
-		"ms-python.pylint",
-		"analytic-signal.preview-pdf",
-		"grapecity.gc-excelviewer",
-		"github.copilot",
-		"github.copilot-chat",
-		"mechatroner.rainbow-csv",
-		"randomfractalsinc.vscode-leaflet",
         "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker",
+        "ms-python.pylint",
         "ms-python.black-formatter",
         "ms-python.isort",
         "ms-python.mypy-type-checker",
-        "ms-python.pylint",
+        "analytic-signal.preview-pdf",
+        "grapecity.gc-excelviewer",
+        "github.copilot",
+        "github.copilot-chat",
+        "mechatroner.rainbow-csv",
+        "randomfractalsinc.vscode-leaflet",
         "ms-vscode.vscode-json",
         "redhat.vscode-yaml",
-        "ms-azuretools.vscode-docker",
-        "mongodb.mongodb-vscode"],
+        "mongodb.mongodb-vscode"
+      ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.linting.enabled": true,
-        "python.linting.pylintEnabled": true,
-        "python.formatting.provider": "black",
-		"workbench.colorTheme": "Default Dark+",
-		"editor.rulers": [80],
-		"workbench.iconTheme": "vs-seti",
-        "python.formatting.blackArgs": [
-          "--line-length=100"
-        ],
         "python.testing.pytestEnabled": true,
         "python.testing.unittestEnabled": false,
+
         "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.rulers": [80, 100],
+
+        "workbench.colorTheme": "Default Dark+",
+        "workbench.iconTheme": "vs-seti",
+
+        "black-formatter.args": ["--line-length=100"],
+
         "editor.codeActionsOnSave": {
-          "source.organizeImports": true
+          "source.organizeImports": "explicit"
         },
+
         "files.exclude": {
           "**/__pycache__": true,
           "**/*.pyc": true
@@ -58,9 +53,7 @@
       }
     }
   },
-  "forwardPorts": [
-    27017
-  ],
+  "forwardPorts": [27017],
   "portsAttributes": {
     "27017": {
       "label": "MongoDB",
@@ -78,4 +71,3 @@
     "WORKSPACE_DIR": "/workspaces/swiss-cv-generator"
   }
 }
-
