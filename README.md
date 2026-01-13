@@ -50,7 +50,7 @@ The easiest way to get started is using GitHub Codespaces:
 5. **Generate CVs:**
    ```bash
    python -m src.cli.main generate \
-     --count 50 \
+     --count 10 \
      --language de \
      --format pdf \
      --output-dir output/my_cvs \
@@ -66,7 +66,7 @@ The easiest way to get started is using GitHub Codespaces:
 
 ### Option 2: Local Setup
 
-Generate 50 CVs in German with random professional designs:
+Generate 10 CVs in German with random professional designs:
 
 ```bash
 # 1. Clone and setup
@@ -92,14 +92,14 @@ python scripts/setup_complete_database.py
 
 # 5. Generate CVs
 python -m src.cli.main generate \
-  --count 50 \
+  --count 10 \
   --language de \
   --format pdf \
   --output-dir output/my_cvs \
   --verbose
 ```
 
-Output: 50 professional CVs with random designs (classic, modern, minimal, timeline) in `output/my_cvs/de/all/`
+Output: 10 professional CVs with random designs (classic, modern, minimal, timeline) in `output/my_cvs/de/all/`
 
 **Important:** The CV_DATA database must be populated before CV generation can work. You can either:
 - Import from the included JSON file: `python scripts/import_cv_data.py` (fast, recommended)
@@ -422,29 +422,29 @@ python -m src.cli.main generate [OPTIONS]
 
 The system automatically selects from 4 different professional CV templates (classic, modern, minimal, timeline) for variety.
 
-Generate 50 CVs in German with random designs (PDF only):
+Generate 10 CVs in German with random designs (PDF only):
 ```bash
 python -m src.cli.main generate \
-  --count 50 \
+  --count 10 \
   --language de \
   --format pdf \
   --output-dir output/my_cvs \
   --verbose
 ```
 
-Generate 100 CVs in French with random designs:
+Generate 10 CVs in French with random designs:
 ```bash
 python -m src.cli.main generate \
-  --count 100 \
+  --count 10 \
   --language fr \
   --format pdf \
   --output-dir output/cvs_fr
 ```
 
-Generate 25 CVs in Italian with both PDF and JSON:
+Generate 10 CVs in Italian with both PDF and JSON:
 ```bash
 python -m src.cli.main generate \
-  --count 25 \
+  --count 10 \
   --language it \
   --format both \
   --output-dir output/cvs_it
@@ -452,19 +452,19 @@ python -m src.cli.main generate \
 
 **Industry-Specific Generation:**
 
-Generate 30 technology CVs in German:
+Generate 10 technology CVs in German:
 ```bash
 python -m src.cli.main generate \
-  --count 30 \
+  --count 10 \
   --industry technology \
   --language de \
   --output-dir output/tech_cvs
 ```
 
-Generate 20 finance CVs in French:
+Generate 10 finance CVs in French:
 ```bash
 python -m src.cli.main generate \
-  --count 20 \
+  --count 10 \
   --industry finance \
   --language fr \
   --output-dir output/finance_cvs
@@ -472,19 +472,19 @@ python -m src.cli.main generate \
 
 **Career Level Filtering:**
 
-Generate 40 senior-level CVs:
+Generate 10 senior-level CVs:
 ```bash
 python -m src.cli.main generate \
-  --count 40 \
+  --count 10 \
   --career-level senior \
   --language de \
   --output-dir output/senior_cvs
 ```
 
-Generate 15 junior CVs with high quality threshold:
+Generate 10 junior CVs with high quality threshold:
 ```bash
 python -m src.cli.main generate \
-  --count 15 \
+  --count 10 \
   --career-level junior \
   --min-quality-score 90 \
   --output-dir output/junior_cvs
@@ -492,10 +492,10 @@ python -m src.cli.main generate \
 
 **Age Group Targeting:**
 
-Generate 35 CVs for young professionals (26-40 years):
+Generate 10 CVs for young professionals (26-40 years):
 ```bash
 python -m src.cli.main generate \
-  --count 35 \
+  --count 10 \
   --age-group 26-40 \
   --language de \
   --output-dir output/young_professionals
@@ -504,7 +504,7 @@ python -m src.cli.main generate \
 **Complete Example with All Options:**
 ```bash
 python -m src.cli.main generate \
-  --count 50 \
+  --count 10 \
   --industry technology \
   --language de \
   --career-level senior \
