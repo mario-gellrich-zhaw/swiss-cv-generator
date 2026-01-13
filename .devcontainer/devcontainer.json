@@ -15,6 +15,16 @@
     "vscode": {
       "extensions": [
         "ms-python.python",
+		"ms-toolsai.jupyter",
+		"ms-azuretools.vscode-docker",
+		"ms-python.autopep8",
+		"ms-python.pylint",
+		"analytic-signal.preview-pdf",
+		"grapecity.gc-excelviewer",
+		"github.copilot",
+		"github.copilot-chat",
+		"mechatroner.rainbow-csv",
+		"randomfractalsinc.vscode-leaflet",
         "ms-python.vscode-pylance",
         "ms-python.black-formatter",
         "ms-python.isort",
@@ -23,13 +33,15 @@
         "ms-vscode.vscode-json",
         "redhat.vscode-yaml",
         "ms-azuretools.vscode-docker",
-        "mongodb.mongodb-vscode"
-      ],
+        "mongodb.mongodb-vscode"],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.linting.enabled": true,
         "python.linting.pylintEnabled": true,
         "python.formatting.provider": "black",
+		"workbench.colorTheme": "Default Dark+",
+		"editor.rulers": [80],
+		"workbench.iconTheme": "vs-seti",
         "python.formatting.blackArgs": [
           "--line-length=100"
         ],
@@ -66,3 +78,4 @@
     "WORKSPACE_DIR": "/workspaces/swiss-cv-generator"
   }
 }
+
