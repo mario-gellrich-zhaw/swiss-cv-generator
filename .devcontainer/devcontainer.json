@@ -6,8 +6,11 @@
   },
   "workspaceFolder": "/workspaces/swiss-cv-generator",
   "features": {
-    "ghcr.io/devcontainers/features/git:1": {}
-  },
+      "ghcr.io/devcontainers/features/python:1": {
+        "version": "3.11"
+      },
+      "ghcr.io/devcontainers/features/git:1": {}
+    },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -35,7 +38,7 @@
 
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "ms-python.black-formatter",
-        "editor.rulers": [80, 100],
+        "editor.rulers": [80],
 
         "workbench.colorTheme": "Default Dark+",
         "workbench.iconTheme": "vs-seti",
