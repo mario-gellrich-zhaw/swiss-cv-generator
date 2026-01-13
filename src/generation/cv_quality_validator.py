@@ -502,6 +502,12 @@ def _validate_portrait(
                 new_portrait = sample_portrait_path(gender, age_group)
                 if new_portrait:
                     cv_doc.portrait_path = new_portrait
+                    # Keep base64 in sync with updated path (prevents wrong photo in exports)
+                    try:
+                        from src.generation.cv_assembler import load_portrait_image
+                        cv_doc.portrait_base64 = load_portrait_image(new_portrait, resize=(150, 150), circular=True)
+                    except Exception:
+                        pass
                     auto_fixes_applied.append(f"Resampled portrait to match age_group {age_group}")
     
     # Check portrait gender matches persona gender
@@ -524,6 +530,12 @@ def _validate_portrait(
                     new_portrait = sample_portrait_path(gender, age_group)
                     if new_portrait:
                         cv_doc.portrait_path = new_portrait
+                        # Keep base64 in sync with updated path (prevents wrong photo in exports)
+                        try:
+                            from src.generation.cv_assembler import load_portrait_image
+                            cv_doc.portrait_base64 = load_portrait_image(new_portrait, resize=(150, 150), circular=True)
+                        except Exception:
+                            pass
                         auto_fixes_applied.append(f"Resampled portrait to match gender {gender}")
     
     return issues

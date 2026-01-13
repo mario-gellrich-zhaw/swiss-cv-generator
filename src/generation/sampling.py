@@ -51,6 +51,22 @@ def load_name_csv(path):
     return names, weights
 
 
+_FALLBACK_FIRST_NAMES: Dict[str, Dict[str, List[str]]] = {
+    "de": {
+        "male": ["Luca", "Noah", "Leon", "Liam", "Matteo", "Jan", "David", "Simon", "Samuel", "Nico"],
+        "female": ["Sophie", "Mia", "Lena", "Lea", "Emma", "Laura", "Nina", "Alina", "Anna", "Sara"],
+    },
+    "fr": {
+        "male": ["Lucas", "Hugo", "Nathan", "Louis", "Gabriel", "Noah", "Mathis", "Jules", "Adam", "Thomas"],
+        "female": ["Emma", "Léa", "Chloé", "Camille", "Manon", "Sarah", "Inès", "Julie", "Alice", "Louise"],
+    },
+    "it": {
+        "male": ["Marco", "Lorenzo", "Matteo", "Alessandro", "Andrea", "Davide", "Simone", "Gabriele", "Luca", "Riccardo"],
+        "female": ["Giulia", "Sofia", "Martina", "Chiara", "Francesca", "Alice", "Elisa", "Sara", "Giorgia", "Valentina"],
+    },
+}
+
+
 class SamplingEngine:
     def __init__(self, data_dir='data'):
         """Initialize sampling engine with demographic configuration."""
@@ -272,6 +288,26 @@ class SamplingEngine:
                 return False
         
         return True
+
+    def _fallback_first_name(self, language: str, gender: str) -> str:
+        """Return a gender-consistent fallback first name.
+
+        This is used when MongoDB name sampling isn't available.
+        """
+        lang = (language or "de").lower()[:2]
+        g = (gender or "male").lower()
+        if g not in ("male", "female"):
+            g = "male"
+
+        by_lang = _FALLBACK_FIRST_NAMES.get(lang)
+        if by_lang and by_lang.get(g):
+            return random.choice(by_lang[g])
+
+        # Final fallback: pick from any language list for the requested gender.
+        pool: List[str] = []
+        for _lang, by_gender in _FALLBACK_FIRST_NAMES.items():
+            pool.extend(by_gender.get(g, []))
+        return random.choice(pool) if pool else "Alex"
     
     def sample_persona(self, preferred_canton=None, preferred_industry=None) -> Dict[str, Any]:
         """
@@ -349,21 +385,22 @@ class SamplingEngine:
         language_str = language.value if hasattr(language, 'value') else str(language)
         
         # Step 10: Sample name (language + gender)
-        first_name_doc = sample_first_name(language_str, gender)
-        last_name_doc = sample_last_name(language_str)
-        
+        # IMPORTANT: keep first_name consistent with sampled gender so portrait/name don't drift.
+        try:
+            first_name_doc = sample_first_name(language_str, gender)
+        except Exception:
+            first_name_doc = None
+
+        try:
+            last_name_doc = sample_last_name(language_str)
+        except Exception:
+            last_name_doc = None
+
         if first_name_doc:
             first_name = first_name_doc.get("name", "Unknown")
         else:
-            # Fallback to CSV data
-            if language_str == 'de' and self.names_de:
-                first_name = weighted_choice(self.names_de, self.names_de_weights)
-            elif language_str == 'fr' and self.names_fr:
-                first_name = weighted_choice(self.names_fr, self.names_fr_weights)
-            elif language_str == 'it' and self.names_it:
-                first_name = weighted_choice(self.names_it, self.names_it_weights)
-            else:
-                first_name = random.choice(['Luca', 'Anna', 'Marco', 'Sophie'])
+            # Gender-safe fallback (do not use mixed-gender CSV lists here)
+            first_name = self._fallback_first_name(language_str, gender)
         
         if last_name_doc:
             last_name = last_name_doc.get("name", "Unknown")

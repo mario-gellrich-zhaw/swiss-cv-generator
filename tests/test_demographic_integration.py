@@ -21,11 +21,15 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from src.generation.sampling import SamplingEngine
+from src.generation.sampling import _FALLBACK_FIRST_NAMES
 from src.database.queries import (
     sample_age_group, sample_gender, determine_career_level_by_age,
     get_industry_employment_percentage, sample_industry_weighted,
     sample_portrait_path
 )
+
+from src.generation.cv_assembler import CVDocument, load_portrait_image
+from src.generation.cv_quality_validator import _validate_portrait
 
 
 class TestDemographicSampling:
@@ -135,6 +139,16 @@ class TestDemographicSampling:
             assert finance_pct > tech_pct, \
                 f"Finance ({finance_pct}%) should appear more than tech ({tech_pct}%)"
 
+    def test_fallback_first_name_respects_gender(self):
+        """Fallback names must not mix genders (prevents portrait/name mismatch when DB sampling fails)."""
+        engine = SamplingEngine()
+
+        for lang in ("de", "fr", "it"):
+            male = engine._fallback_first_name(lang, "male")
+            female = engine._fallback_first_name(lang, "female")
+            assert male in _FALLBACK_FIRST_NAMES[lang]["male"]
+            assert female in _FALLBACK_FIRST_NAMES[lang]["female"]
+
 
 class TestPortraitSelection:
     """Test portrait selection and validation."""
@@ -231,6 +245,30 @@ class TestPortraitSelection:
         # But we should have at least 5 unique portraits out of 10
         assert len(unique_portraits) >= 3, \
             f"Too many duplicate portraits: only {len(unique_portraits)} unique out of {len(portraits)}"
+
+    def test_portrait_base64_updates_on_autofix(self):
+        """If portrait_path is auto-fixed, portrait_base64 must be refreshed to match."""
+        original = "male/18-25/Male_1_Gemini_Generated_Image_c9nydc9nydc9nydc.png"
+        original_b64 = load_portrait_image(original, resize=(150, 150), circular=True)
+        assert original_b64, "Expected portrait image to be loadable"
+
+        cv_doc = CVDocument(
+            first_name="Test",
+            last_name="User",
+            full_name="Test User",
+            age=30,  # 26-40
+            gender="male",
+            canton="ZH",
+            portrait_path=original,
+            portrait_base64=original_b64,
+        )
+
+        auto_fixes_applied = []
+        _validate_portrait(cv_doc, persona={"gender": "male"}, auto_fix=True, auto_fixes_applied=auto_fixes_applied)
+
+        assert cv_doc.portrait_path.startswith("male/26-40/"), "Expected portrait path to be resampled to match age_group"
+        expected_b64 = load_portrait_image(cv_doc.portrait_path, resize=(150, 150), circular=True)
+        assert cv_doc.portrait_base64 == expected_b64, "portrait_base64 should match the final portrait_path"
 
 
 class TestCompanyIndustryAlignment:
