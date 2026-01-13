@@ -26,6 +26,9 @@
         "mongodb.mongodb-vscode"
       ],
       "settings": {
+        "workbench.colorTheme": "Default Dark+",
+        "workbench.iconTheme": "vs-seti",
+        "editor.rulers": [80],
         "python.defaultInterpreterPath": "/usr/local/bin/python",
         "python.linting.enabled": true,
         "python.linting.pylintEnabled": true,
