@@ -1,0 +1,1 @@
+﻿{age} ans, domicilié à {canton}. {experience_years} ans d''expérience en tant que {occupation}. Profil: professionnel expérimenté, orienté vers les projets et le travail en équipe.

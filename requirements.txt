@@ -1,0 +1,44 @@
+# Core Framework
+click>=8.0
+typer>=0.9.0
+rich>=13.0
+
+# Data Validation & Settings
+pydantic>=1.10,<2
+# pydantic-settings is optional - code has fallback for pydantic<2
+# pydantic-settings>=2.0.0  # Only needed if using pydantic>=2
+jsonschema
+email-validator>=2.3.0
+
+# Database
+pymongo[srv]>=4.6.0
+
+# Web Scraping (for scraper/)
+requests>=2.31.0
+beautifulsoup4>=4.12.2
+
+# Template Rendering
+jinja2>=3.0
+
+# Data Processing
+pandas
+
+# PDF Generation
+reportlab>=4.0
+weasyprint>=55.0
+
+# Image Processing
+Pillow>=9.0.0
+
+# AI Integration
+openai>=0.27
+
+# Environment & Configuration
+python-dotenv>=1.0.0
+
+# Development & Testing
+pytest
+pytest-cov
+black
+pylint
+mypy

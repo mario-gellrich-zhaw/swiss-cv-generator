@@ -1,0 +1,67 @@
+{
+  "portrait_index": {
+    "male": {
+      "18-25": [
+        "male/18-25/Male_1_Gemini_Generated_Image_c9nydc9nydc9nydc.png",
+        "male/18-25/Male_1_Gemini_Generated_Image_h24gv3h24gv3h24g.png",
+        "male/18-25/Male_1_Gemini_Generated_Image_ve5n44ve5n44ve5n.png",
+        "male/18-25/Male_1_Gemini_Generated_Image_6lka8l6lka8l6lka.png",
+        "male/18-25/Male_1_Gemini_Generated_Image_mawlnxmawlnxmawl.png"
+      ],
+      "26-40": [
+        "male/26-40/Male_2_Gemini_Generated_Image_qs9cpqs9cpqs9cpq.png",
+        "male/26-40/Male_2_Gemini_Generated_Image_z3tmhsz3tmhsz3tm.png",
+        "male/26-40/Male_2_Gemini_Generated_Image_xbz7pexbz7pexbz7.png",
+        "male/26-40/Male_2_Gemini_Generated_Image_8lc0gk8lc0gk8lc0.png",
+        "male/26-40/Male_2_Gemini_Generated_Image_c2xmhec2xmhec2xm.png"
+      ],
+      "41-65": [
+        "male/41-65/Male_3_Gemini_Generated_Image_5c0xoc5c0xoc5c0x.png",
+        "male/41-65/Male_3_Gemini_Generated_Image_4yawnd4yawnd4yaw.png",
+        "male/41-65/Male_3_Gemini_Generated_Image_xm8agfxm8agfxm8a.png",
+        "male/41-65/Male_3_Gemini_Generated_Image_8hhrsr8hhrsr8hhr.png",
+        "male/41-65/Male_3_Gemini_Generated_Image_f1d6iqf1d6iqf1d6.png"
+      ]
+    },
+    "female": {
+      "18-25": [
+        "female/18-25/Female_1_Gemini_Generated_Image_4fx72a4fx72a4fx7.png",
+        "female/18-25/Female_1_Gemini_Generated_Image_7na9yk7na9yk7na9.png",
+        "female/18-25/Female_1_Gemini_Generated_Image_bcm51ebcm51ebcm5.png",
+        "female/18-25/Female_1_Gemini_Generated_Image_qzksa0qzksa0qzks.png",
+        "female/18-25/Female_1_Gemini_Generated_Image_vmmylhvmmylhvmmy.png"
+      ],
+      "26-40": [
+        "female/26-40/Female_2_Gemini_Generated_Image_qu3mmtqu3mmtqu3m.png",
+        "female/26-40/Female_2_Gemini_Generated_Image_v9sla5v9sla5v9sl.png",
+        "female/26-40/Female_2_Gemini_Generated_Image_uc5fjjuc5fjjuc5f.png",
+        "female/26-40/Female_2_Gemini_Generated_Image_uzwkrruzwkrruzwk.png",
+        "female/26-40/Female_2_Gemini_Generated_Image_ddj81bddj81bddj8.png"
+      ],
+      "41-65": [
+        "female/41-65/Female_3_Gemini_Generated_Image_1y7jnw1y7jnw1y7j.png",
+        "female/41-65/Female_3_Gemini_Generated_Image_1d3u8o1d3u8o1d3u.png",
+        "female/41-65/Female_3_Gemini_Generated_Image_bbpqojbbpqojbbpq.png",
+        "female/41-65/Female_3_Gemini_Generated_Image_43e9gr43e9gr43e9.png",
+        "female/41-65/Female_3_Gemini_Generated_Image_tlakdxtlakdxtlak.png"
+      ]
+    }
+  },
+  "statistics": {
+    "total_images": 30,
+    "by_gender": {
+      "male": 15,
+      "female": 15
+    },
+    "by_age_group": {
+      "18-25": 10,
+      "26-40": 10,
+      "41-65": 10
+    },
+    "valid_images": 30,
+    "invalid_images": 0,
+    "warnings": []
+  },
+  "created_at": "2025-11-27T20:12:47.618400",
+  "total_images": 30
+}

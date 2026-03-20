@@ -1,0 +1,2522 @@
+[
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa25a"
+    },
+    "language": "de",
+    "name": "Müller",
+    "frequency": 85,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa25c"
+    },
+    "language": "de",
+    "name": "Meier",
+    "frequency": 70,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa25e"
+    },
+    "language": "de",
+    "name": "Schneider",
+    "frequency": 65,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa260"
+    },
+    "language": "de",
+    "name": "Zürcher",
+    "frequency": 6,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa262"
+    },
+    "language": "de",
+    "name": "Keller",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa264"
+    },
+    "language": "de",
+    "name": "Huber",
+    "frequency": 35,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa266"
+    },
+    "language": "de",
+    "name": "Brunner",
+    "frequency": 30,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa268"
+    },
+    "language": "de",
+    "name": "Fischer",
+    "frequency": 75,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa26a"
+    },
+    "language": "de",
+    "name": "Baumann",
+    "frequency": 45,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa26c"
+    },
+    "language": "de",
+    "name": "Landolt",
+    "frequency": 40,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa26e"
+    },
+    "language": "de",
+    "name": "Gerber",
+    "frequency": 25,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa270"
+    },
+    "language": "de",
+    "name": "Bär",
+    "frequency": 12,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa272"
+    },
+    "language": "de",
+    "name": "Roth",
+    "frequency": 25,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa274"
+    },
+    "language": "de",
+    "name": "Moser",
+    "frequency": 25,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa276"
+    },
+    "language": "de",
+    "name": "Studer",
+    "frequency": 12,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa278"
+    },
+    "language": "de",
+    "name": "Haller",
+    "frequency": 10,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa27a"
+    },
+    "language": "de",
+    "name": "Kaufmann",
+    "frequency": 5,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa27c"
+    },
+    "language": "de",
+    "name": "Bischof",
+    "frequency": 5,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa27e"
+    },
+    "language": "de",
+    "name": "Wyss",
+    "frequency": 5,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659c915dbc80f9bafa280"
+    },
+    "language": "de",
+    "name": "Lüscher",
+    "frequency": 25,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa288"
+    },
+    "language": "de",
+    "name": "Zimmermann",
+    "frequency": 55,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa28a"
+    },
+    "language": "de",
+    "name": "Frei",
+    "frequency": 8,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa28f"
+    },
+    "language": "de",
+    "name": "Schweizer",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa291"
+    },
+    "language": "de",
+    "name": "Liechti",
+    "frequency": 30,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa293"
+    },
+    "language": "de",
+    "name": "Hofmann",
+    "frequency": 40,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa296"
+    },
+    "language": "de",
+    "name": "Käser",
+    "frequency": 20,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa298"
+    },
+    "language": "de",
+    "name": "Weber",
+    "frequency": 50,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa29a"
+    },
+    "language": "de",
+    "name": "Lang",
+    "frequency": 10,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa29c"
+    },
+    "language": "de",
+    "name": "Jost",
+    "frequency": 16,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659ce15dbc80f9bafa29e"
+    },
+    "language": "de",
+    "name": "Sutter",
+    "frequency": 40,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659d215dbc80f9bafa2ad"
+    },
+    "name": "Suter",
+    "language": "de",
+    "frequency": 10,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659d215dbc80f9bafa2b1"
+    },
+    "name": "Kägi",
+    "language": "de",
+    "frequency": 18,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659d215dbc80f9bafa2b3"
+    },
+    "name": "Jäggi",
+    "language": "de",
+    "frequency": 15,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659d215dbc80f9bafa2b6"
+    },
+    "name": "Bürgin",
+    "language": "de",
+    "frequency": 5,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659d215dbc80f9bafa2b8"
+    },
+    "name": "Kunz",
+    "language": "de",
+    "frequency": 10,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659d215dbc80f9bafa2ba"
+    },
+    "name": "Vogt",
+    "language": "de",
+    "frequency": 20,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659d215dbc80f9bafa2bd"
+    },
+    "name": "Baur",
+    "language": "de",
+    "frequency": 10,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659d615dbc80f9bafa2c7"
+    },
+    "name": "Egger",
+    "language": "de",
+    "frequency": 15,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659d615dbc80f9bafa2c9"
+    },
+    "name": "Schmid",
+    "language": "de",
+    "frequency": 75,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659d615dbc80f9bafa2cc"
+    },
+    "name": "Amrein",
+    "language": "de",
+    "frequency": 30,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659d615dbc80f9bafa2cf"
+    },
+    "name": "Jäger",
+    "language": "de",
+    "frequency": 35,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659d615dbc80f9bafa2d4"
+    },
+    "name": "Bieri",
+    "language": "de",
+    "frequency": 12,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659d615dbc80f9bafa2d6"
+    },
+    "name": "Steiner",
+    "language": "de",
+    "frequency": 20,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659d615dbc80f9bafa2d8"
+    },
+    "name": "Aeschbacher",
+    "language": "de",
+    "frequency": 1,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659db15dbc80f9bafa2e7"
+    },
+    "name": "Häusermann",
+    "language": "de",
+    "frequency": 55,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659db15dbc80f9bafa2ea"
+    },
+    "name": "Bachmann",
+    "language": "de",
+    "frequency": 18,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659db15dbc80f9bafa2f0"
+    },
+    "name": "Schwarz",
+    "language": "de",
+    "frequency": 15,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e015dbc80f9bafa302"
+    },
+    "name": "Kuhn",
+    "language": "de",
+    "frequency": 14,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e015dbc80f9bafa305"
+    },
+    "name": "Koch",
+    "language": "de",
+    "frequency": 20,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659e015dbc80f9bafa307"
+    },
+    "name": "Lüthi",
+    "language": "de",
+    "frequency": 20,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e015dbc80f9bafa309"
+    },
+    "name": "Häberli",
+    "language": "de",
+    "frequency": 5,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa311"
+    },
+    "name": "Berthet",
+    "language": "fr",
+    "frequency": 85,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa313"
+    },
+    "name": "Boillat",
+    "language": "fr",
+    "frequency": 60,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa315"
+    },
+    "name": "Dubois",
+    "language": "fr",
+    "frequency": 90,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa317"
+    },
+    "name": "Roulet",
+    "language": "fr",
+    "frequency": 75,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa319"
+    },
+    "name": "Fauret",
+    "language": "fr",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa31b"
+    },
+    "name": "Grosjean",
+    "language": "fr",
+    "frequency": 55,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa31d"
+    },
+    "name": "Pellaz",
+    "language": "fr",
+    "frequency": 45,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa31f"
+    },
+    "name": "Bosset",
+    "language": "fr",
+    "frequency": 55,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa321"
+    },
+    "name": "Monney",
+    "language": "fr",
+    "frequency": 65,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa323"
+    },
+    "name": "Perrinaz",
+    "language": "fr",
+    "frequency": 30,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa325"
+    },
+    "name": "Rochat",
+    "language": "fr",
+    "frequency": 65,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa327"
+    },
+    "name": "Clerc",
+    "language": "fr",
+    "frequency": 77,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa329"
+    },
+    "name": "Favre",
+    "language": "fr",
+    "frequency": 95,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa32b"
+    },
+    "name": "Rey",
+    "language": "fr",
+    "frequency": 85,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa32d"
+    },
+    "name": "Chapuis",
+    "language": "fr",
+    "frequency": 70,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa32f"
+    },
+    "name": "Vulliet",
+    "language": "fr",
+    "frequency": 40,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa331"
+    },
+    "name": "Schnetzler",
+    "language": "fr",
+    "frequency": 25,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa333"
+    },
+    "name": "Giroud",
+    "language": "fr",
+    "frequency": 73,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa335"
+    },
+    "name": "Bovet",
+    "language": "fr",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e415dbc80f9bafa337"
+    },
+    "name": "Riondet",
+    "language": "fr",
+    "frequency": 38,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa33b"
+    },
+    "name": "Perret",
+    "language": "fr",
+    "frequency": 70,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa33e"
+    },
+    "name": "Perraz",
+    "language": "fr",
+    "frequency": 70,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa340"
+    },
+    "name": "Nicolet",
+    "language": "fr",
+    "frequency": 85,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa342"
+    },
+    "name": "Baumaz",
+    "language": "fr",
+    "frequency": 40,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa344"
+    },
+    "name": "Moret",
+    "language": "fr",
+    "frequency": 75,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa346"
+    },
+    "name": "Marchand",
+    "language": "fr",
+    "frequency": 65,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa348"
+    },
+    "name": "Chevalaz",
+    "language": "fr",
+    "frequency": 60,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa34a"
+    },
+    "name": "Dupraz",
+    "language": "fr",
+    "frequency": 45,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa34c"
+    },
+    "name": "Vidal",
+    "language": "fr",
+    "frequency": 95,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa34f"
+    },
+    "name": "Chavaz",
+    "language": "fr",
+    "frequency": 70,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa351"
+    },
+    "name": "Rossier",
+    "language": "fr",
+    "frequency": 55,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa353"
+    },
+    "name": "Lemoine",
+    "language": "fr",
+    "frequency": 65,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa355"
+    },
+    "name": "Monnet",
+    "language": "fr",
+    "frequency": 80,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa357"
+    },
+    "name": "Gallaz",
+    "language": "fr",
+    "frequency": 35,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659e915dbc80f9bafa35a"
+    },
+    "name": "Berset",
+    "language": "fr",
+    "frequency": 80,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa35e"
+    },
+    "name": "Bertholet",
+    "language": "fr",
+    "frequency": 80,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa362"
+    },
+    "name": "Bucher",
+    "language": "fr",
+    "frequency": 53,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa364"
+    },
+    "name": "Villard",
+    "language": "fr",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa367"
+    },
+    "name": "Gaillard",
+    "language": "fr",
+    "frequency": 75,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa36b"
+    },
+    "name": "Reymond",
+    "language": "fr",
+    "frequency": 73,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa36d"
+    },
+    "name": "Rossi",
+    "language": "fr",
+    "frequency": 30,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa36f"
+    },
+    "name": "Chappuis",
+    "language": "fr",
+    "frequency": 63,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa371"
+    },
+    "name": "Perrin",
+    "language": "fr",
+    "frequency": 84,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa373"
+    },
+    "name": "Michaud",
+    "language": "fr",
+    "frequency": 15,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa375"
+    },
+    "name": "Moulin",
+    "language": "fr",
+    "frequency": 10,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa377"
+    },
+    "name": "Frey",
+    "language": "fr",
+    "frequency": 5,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa379"
+    },
+    "name": "Ducrey",
+    "language": "fr",
+    "frequency": 5,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa37b"
+    },
+    "name": "Chevalley",
+    "language": "fr",
+    "frequency": 42,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa37d"
+    },
+    "name": "Baumann",
+    "language": "fr",
+    "frequency": 5,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659ee15dbc80f9bafa37f"
+    },
+    "name": "Perrier",
+    "language": "fr",
+    "frequency": 5,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa383"
+    },
+    "name": "Berthoud",
+    "language": "fr",
+    "frequency": 80,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa388"
+    },
+    "name": "Droz",
+    "language": "fr",
+    "frequency": 82,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa38b"
+    },
+    "name": "Montandon",
+    "language": "fr",
+    "frequency": 55,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa390"
+    },
+    "name": "Fournier",
+    "language": "fr",
+    "frequency": 85,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa394"
+    },
+    "name": "Baillif",
+    "language": "fr",
+    "frequency": 45,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa396"
+    },
+    "name": "Mercier",
+    "language": "fr",
+    "frequency": 45,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa398"
+    },
+    "name": "Perron",
+    "language": "fr",
+    "frequency": 75,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa39a"
+    },
+    "name": "Nicod",
+    "language": "fr",
+    "frequency": 55,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f215dbc80f9bafa39d"
+    },
+    "name": "Mottaz",
+    "language": "fr",
+    "frequency": 50,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3a0"
+    },
+    "name": "Bianchi",
+    "language": "it",
+    "frequency": 75,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3a2"
+    },
+    "name": "Riva",
+    "language": "it",
+    "frequency": 65,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3a4"
+    },
+    "name": "Rossi",
+    "language": "it",
+    "frequency": 85,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3a6"
+    },
+    "name": "Ferrari",
+    "language": "it",
+    "frequency": 55,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3a8"
+    },
+    "name": "Verdi",
+    "language": "it",
+    "frequency": 60,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3aa"
+    },
+    "name": "Parini",
+    "language": "it",
+    "frequency": 40,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3ac"
+    },
+    "name": "Morandi",
+    "language": "it",
+    "frequency": 50,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3ae"
+    },
+    "name": "Locatelli",
+    "language": "it",
+    "frequency": 55,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3b0"
+    },
+    "name": "Comi",
+    "language": "it",
+    "frequency": 40,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3b2"
+    },
+    "name": "Bosco",
+    "language": "it",
+    "frequency": 35,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3b4"
+    },
+    "name": "Corti",
+    "language": "it",
+    "frequency": 50,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3b6"
+    },
+    "name": "Barbieri",
+    "language": "it",
+    "frequency": 75,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3b8"
+    },
+    "name": "Molinari",
+    "language": "it",
+    "frequency": 65,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3ba"
+    },
+    "name": "Togni",
+    "language": "it",
+    "frequency": 55,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3bc"
+    },
+    "name": "Campi",
+    "language": "it",
+    "frequency": 45,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3be"
+    },
+    "name": "Borghi",
+    "language": "it",
+    "frequency": 40,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3c0"
+    },
+    "name": "Galli",
+    "language": "it",
+    "frequency": 20,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3c2"
+    },
+    "name": "Longo",
+    "language": "it",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3c4"
+    },
+    "name": "Pellegrini",
+    "language": "it",
+    "frequency": 30,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659f615dbc80f9bafa3c6"
+    },
+    "name": "Bovo",
+    "language": "it",
+    "frequency": 40,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3cd"
+    },
+    "name": "Marti",
+    "language": "it",
+    "frequency": 85,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3cf"
+    },
+    "name": "Bernasconi",
+    "language": "it",
+    "frequency": 35,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3d2"
+    },
+    "name": "Lombardi",
+    "language": "it",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3d5"
+    },
+    "name": "Boselli",
+    "language": "it",
+    "frequency": 40,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3d7"
+    },
+    "name": "Conti",
+    "language": "it",
+    "frequency": 16,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3d9"
+    },
+    "name": "Maggini",
+    "language": "it",
+    "frequency": 50,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3dd"
+    },
+    "name": "Zanetti",
+    "language": "it",
+    "frequency": 55,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3e0"
+    },
+    "language": "it",
+    "name": "Tettamanti",
+    "frequency": 65,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3e2"
+    },
+    "language": "it",
+    "name": "Pini",
+    "frequency": 75,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3e4"
+    },
+    "language": "it",
+    "name": "Bettini",
+    "frequency": 35,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3e6"
+    },
+    "language": "it",
+    "name": "Marchesi",
+    "frequency": 40,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3e9"
+    },
+    "language": "it",
+    "name": "Rusconi",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659fb15dbc80f9bafa3eb"
+    },
+    "language": "it",
+    "name": "Link",
+    "frequency": 20,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa3f3"
+    },
+    "name": "Pedretti",
+    "language": "it",
+    "frequency": 60,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa3f5"
+    },
+    "language": "it",
+    "name": "Moro",
+    "frequency": 40,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa3f8"
+    },
+    "language": "it",
+    "name": "Bellini",
+    "frequency": 45,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa3fa"
+    },
+    "name": "Cavadini",
+    "language": "it",
+    "frequency": 8,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa3fe"
+    },
+    "language": "it",
+    "name": "Pozzi",
+    "frequency": 50,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa401"
+    },
+    "language": "it",
+    "name": "Grisoni",
+    "frequency": 40,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa406"
+    },
+    "language": "it",
+    "name": "Sartori",
+    "frequency": 60,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa408"
+    },
+    "language": "it",
+    "name": "De Luca",
+    "frequency": 2,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "697659ff15dbc80f9bafa40c"
+    },
+    "language": "it",
+    "name": "Angelo",
+    "frequency": 40,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "69765bf615dbc80f9bafa7c3"
+    },
+    "language": "de",
+    "name": "Meyer",
+    "frequency": 38,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765bf615dbc80f9bafa7c6"
+    },
+    "language": "de",
+    "name": "Hug",
+    "frequency": 16,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765bf615dbc80f9bafa7cd"
+    },
+    "language": "de",
+    "name": "Rüegg",
+    "frequency": 28,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765bf615dbc80f9bafa7cf"
+    },
+    "language": "de",
+    "name": "Böhlen",
+    "frequency": 20,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765bfb15dbc80f9bafa7e2"
+    },
+    "language": "de",
+    "name": "Aeschlimann",
+    "frequency": 30,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c0015dbc80f9bafa7fc"
+    },
+    "language": "de",
+    "name": "Graf",
+    "frequency": 31,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c0015dbc80f9bafa7ff"
+    },
+    "language": "de",
+    "name": "Hess",
+    "frequency": 21,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c0015dbc80f9bafa801"
+    },
+    "language": "de",
+    "name": "Maurer",
+    "frequency": 30,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c0915dbc80f9bafa825"
+    },
+    "language": "de",
+    "name": "Gasser",
+    "frequency": 30,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c0915dbc80f9bafa82c"
+    },
+    "language": "de",
+    "name": "Widmer",
+    "frequency": 20,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c0915dbc80f9bafa82f"
+    },
+    "language": "de",
+    "name": "Knecht",
+    "frequency": 18,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c0d15dbc80f9bafa83e"
+    },
+    "language": "de",
+    "name": "Ziegler",
+    "frequency": 45,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c0d15dbc80f9bafa846"
+    },
+    "language": "de",
+    "name": "Vogel",
+    "frequency": 10,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1115dbc80f9bafa84e"
+    },
+    "language": "fr",
+    "name": "Lapierre",
+    "frequency": 45,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1115dbc80f9bafa850"
+    },
+    "name": "Berclaz",
+    "language": "fr",
+    "frequency": 40,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1115dbc80f9bafa853"
+    },
+    "name": "Mermod",
+    "language": "fr",
+    "frequency": 60,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1115dbc80f9bafa856"
+    },
+    "language": "fr",
+    "name": "Blanc",
+    "frequency": 85,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1215dbc80f9bafa85c"
+    },
+    "language": "fr",
+    "name": "Jaccard",
+    "frequency": 36,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1215dbc80f9bafa85e"
+    },
+    "language": "fr",
+    "name": "Vouilloz",
+    "frequency": 28,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1215dbc80f9bafa860"
+    },
+    "language": "fr",
+    "name": "Barras",
+    "frequency": 65,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1215dbc80f9bafa862"
+    },
+    "language": "fr",
+    "name": "Magnin",
+    "frequency": 78,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1215dbc80f9bafa865"
+    },
+    "language": "fr",
+    "name": "Grangier",
+    "frequency": 35,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1215dbc80f9bafa868"
+    },
+    "language": "fr",
+    "name": "Chablaix",
+    "frequency": 32,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1715dbc80f9bafa86c"
+    },
+    "language": "fr",
+    "name": "Bouchet",
+    "frequency": 78,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1715dbc80f9bafa870"
+    },
+    "language": "fr",
+    "name": "Berney",
+    "frequency": 75,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1715dbc80f9bafa873"
+    },
+    "language": "fr",
+    "name": "Muller",
+    "frequency": 70,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1715dbc80f9bafa876"
+    },
+    "language": "fr",
+    "name": "Rouiller",
+    "frequency": 40,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1715dbc80f9bafa87d"
+    },
+    "language": "fr",
+    "name": "Neuhaus",
+    "frequency": 40,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1715dbc80f9bafa881"
+    },
+    "name": "Savary",
+    "language": "fr",
+    "frequency": 60,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1715dbc80f9bafa883"
+    },
+    "language": "fr",
+    "name": "Villaz",
+    "frequency": 56,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1715dbc80f9bafa885"
+    },
+    "name": "Bonvin",
+    "language": "fr",
+    "frequency": 60,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa88c"
+    },
+    "name": "Piccard",
+    "language": "fr",
+    "frequency": 64,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa893"
+    },
+    "language": "fr",
+    "name": "Müller",
+    "frequency": 50,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa897"
+    },
+    "language": "fr",
+    "name": "Lombard",
+    "frequency": 55,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa899"
+    },
+    "language": "fr",
+    "name": "Benoit",
+    "frequency": 77,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa89b"
+    },
+    "language": "fr",
+    "name": "Gerber",
+    "frequency": 79,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa89e"
+    },
+    "language": "fr",
+    "name": "Dufour",
+    "frequency": 90,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa8a0"
+    },
+    "language": "fr",
+    "name": "Pilloud",
+    "frequency": 40,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa8a2"
+    },
+    "language": "fr",
+    "name": "Métroz",
+    "frequency": 66,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c1c15dbc80f9bafa8a5"
+    },
+    "language": "fr",
+    "name": "Pellissier",
+    "frequency": 76,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8a9"
+    },
+    "language": "fr",
+    "name": "Rouget",
+    "frequency": 65,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8ab"
+    },
+    "language": "fr",
+    "name": "Pernaz",
+    "frequency": 42,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8af"
+    },
+    "language": "fr",
+    "name": "Michaudet",
+    "frequency": 33,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8b1"
+    },
+    "language": "fr",
+    "name": "Jorat",
+    "frequency": 25,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8b3"
+    },
+    "language": "fr",
+    "name": "Lapaz",
+    "frequency": 47,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8b5"
+    },
+    "language": "fr",
+    "name": "Rosset",
+    "frequency": 75,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8b7"
+    },
+    "language": "fr",
+    "name": "Chevret",
+    "frequency": 59,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8ba"
+    },
+    "language": "fr",
+    "name": "Vuarat",
+    "frequency": 50,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8bd"
+    },
+    "language": "fr",
+    "name": "Muret",
+    "frequency": 68,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8bf"
+    },
+    "language": "fr",
+    "name": "Dufaux",
+    "frequency": 77,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8c1"
+    },
+    "language": "fr",
+    "name": "Perruchoud",
+    "frequency": 44,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8c3"
+    },
+    "language": "fr",
+    "name": "Levet",
+    "frequency": 54,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2015dbc80f9bafa8c5"
+    },
+    "language": "fr",
+    "name": "Vulliez",
+    "frequency": 36,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8cc"
+    },
+    "language": "it",
+    "name": "Broggi",
+    "frequency": 6,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8d1"
+    },
+    "language": "it",
+    "name": "Bosio",
+    "frequency": 18,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8d4"
+    },
+    "language": "it",
+    "name": "Mazza",
+    "frequency": 80,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8d6"
+    },
+    "language": "it",
+    "name": "Rusca",
+    "frequency": 70,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8d8"
+    },
+    "language": "it",
+    "name": "Capelli",
+    "frequency": 45,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8da"
+    },
+    "language": "it",
+    "name": "Colombo",
+    "frequency": 75,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8dd"
+    },
+    "language": "it",
+    "name": "Lugano",
+    "frequency": 40,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8e1"
+    },
+    "language": "it",
+    "name": "Forni",
+    "frequency": 65,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8e3"
+    },
+    "language": "it",
+    "name": "Buzzi",
+    "frequency": 70,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8e7"
+    },
+    "language": "it",
+    "name": "Quaglia",
+    "frequency": 75,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2615dbc80f9bafa8e9"
+    },
+    "language": "it",
+    "name": "Cattaneo",
+    "frequency": 12,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2c15dbc80f9bafa8f0"
+    },
+    "language": "it",
+    "name": "Moresi",
+    "frequency": 25,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2c15dbc80f9bafa8f8"
+    },
+    "language": "it",
+    "name": "Amato",
+    "frequency": 50,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2c15dbc80f9bafa8fd"
+    },
+    "language": "it",
+    "name": "Schmid",
+    "frequency": 70,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2c15dbc80f9bafa900"
+    },
+    "language": "it",
+    "name": "Martinelli",
+    "frequency": 80,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2c15dbc80f9bafa902"
+    },
+    "language": "it",
+    "name": "Gallina",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2c15dbc80f9bafa904"
+    },
+    "language": "it",
+    "name": "Russo",
+    "frequency": 35,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c2c15dbc80f9bafa906"
+    },
+    "language": "it",
+    "name": "Vitali",
+    "frequency": 50,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa90d"
+    },
+    "language": "it",
+    "name": "Fumagalli",
+    "frequency": 60,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa910"
+    },
+    "language": "it",
+    "name": "Martini",
+    "frequency": 55,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa912"
+    },
+    "language": "it",
+    "name": "Casanova",
+    "frequency": 45,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa914"
+    },
+    "language": "it",
+    "name": "Moretti",
+    "frequency": 85,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa917"
+    },
+    "language": "it",
+    "name": "Gallini",
+    "frequency": 30,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa919"
+    },
+    "language": "it",
+    "name": "Varese",
+    "frequency": 25,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa91c"
+    },
+    "language": "it",
+    "name": "Porro",
+    "frequency": 50,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa91e"
+    },
+    "language": "it",
+    "name": "Balestra",
+    "frequency": 20,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "69765c3115dbc80f9bafa922"
+    },
+    "language": "it",
+    "name": "Cortesi",
+    "frequency": 30,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765ffd15dbc80f9bafc864"
+    },
+    "language": "de",
+    "name": "Reichmuth",
+    "frequency": 45,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "69765ffd15dbc80f9bafc869"
+    },
+    "language": "de",
+    "name": "Bernhard",
+    "frequency": 25,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765ffd15dbc80f9bafc86b"
+    },
+    "language": "de",
+    "name": "Jenni",
+    "frequency": 20,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "69765ffd15dbc80f9bafc870"
+    },
+    "language": "de",
+    "name": "Frey",
+    "frequency": 5,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "69765ffd15dbc80f9bafc873"
+    },
+    "language": "de",
+    "name": "Ryser",
+    "frequency": 5,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "6976600215dbc80f9bafc880"
+    },
+    "language": "de",
+    "name": "Küng",
+    "frequency": 21,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976600215dbc80f9bafc886"
+    },
+    "language": "de",
+    "name": "Hoffmann",
+    "frequency": 10,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976600215dbc80f9bafc88a"
+    },
+    "language": "de",
+    "name": "Hürlimann",
+    "frequency": 4,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "6976600615dbc80f9bafc8a0"
+    },
+    "language": "de",
+    "name": "Aebi",
+    "frequency": 35,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976601515dbc80f9bafc8dd"
+    },
+    "language": "de",
+    "name": "Lehmann",
+    "frequency": 40,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976601515dbc80f9bafc8e7"
+    },
+    "name": "Bucher",
+    "language": "de",
+    "frequency": 10,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976601a15dbc80f9bafc8f7"
+    },
+    "name": "Morel",
+    "language": "fr",
+    "frequency": 63,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976601a15dbc80f9bafc8fb"
+    },
+    "language": "fr",
+    "name": "Aubert",
+    "frequency": 58,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976601a15dbc80f9bafc8ff"
+    },
+    "language": "fr",
+    "name": "Granger",
+    "frequency": 45,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976601a15dbc80f9bafc901"
+    },
+    "language": "fr",
+    "name": "Girard",
+    "frequency": 79,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976601a15dbc80f9bafc906"
+    },
+    "language": "fr",
+    "name": "Perroud",
+    "frequency": 38,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976601e15dbc80f9bafc90d"
+    },
+    "language": "fr",
+    "name": "Chevrier",
+    "frequency": 40,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976601e15dbc80f9bafc910"
+    },
+    "language": "fr",
+    "name": "Pernet",
+    "frequency": 45,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976601e15dbc80f9bafc91e"
+    },
+    "name": "Jaquet",
+    "language": "fr",
+    "frequency": 45,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976601e15dbc80f9bafc920"
+    },
+    "language": "fr",
+    "name": "Léger",
+    "frequency": 25,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976602315dbc80f9bafc929"
+    },
+    "language": "fr",
+    "name": "Blanchet",
+    "frequency": 68,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976602315dbc80f9bafc934"
+    },
+    "language": "fr",
+    "name": "Vouillamoz",
+    "frequency": 30,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976602315dbc80f9bafc937"
+    },
+    "language": "fr",
+    "name": "Ducret",
+    "frequency": 35,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976602315dbc80f9bafc93b"
+    },
+    "name": "Besson",
+    "language": "fr",
+    "frequency": 63,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976602315dbc80f9bafc93d"
+    },
+    "language": "fr",
+    "name": "Zufferey",
+    "frequency": 38,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976602315dbc80f9bafc940"
+    },
+    "language": "fr",
+    "name": "Giraud",
+    "frequency": 72,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976602715dbc80f9bafc94c"
+    },
+    "language": "fr",
+    "name": "Girardet",
+    "frequency": 75,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976602715dbc80f9bafc94e"
+    },
+    "language": "fr",
+    "name": "Marendaz",
+    "frequency": 60,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "6976602715dbc80f9bafc950"
+    },
+    "language": "fr",
+    "name": "Pittet",
+    "frequency": 70,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976602715dbc80f9bafc955"
+    },
+    "language": "fr",
+    "name": "Corbaz",
+    "frequency": 65,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976602715dbc80f9bafc957"
+    },
+    "language": "fr",
+    "name": "Molinari",
+    "frequency": 55,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976602c15dbc80f9bafc964"
+    },
+    "language": "it",
+    "name": "Müller",
+    "frequency": 40,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976602c15dbc80f9bafc969"
+    },
+    "language": "it",
+    "name": "Boschetti",
+    "frequency": 35,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "6976602c15dbc80f9bafc96b"
+    },
+    "name": "Fontana",
+    "language": "it",
+    "frequency": 65,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976602c15dbc80f9bafc970"
+    },
+    "name": "Cavalieri",
+    "language": "it",
+    "frequency": 25,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976602c15dbc80f9bafc972"
+    },
+    "name": "Fusco",
+    "language": "it",
+    "frequency": 20,
+    "origin": "modern"
+  },
+  {
+    "_id": {
+      "$oid": "6976602c15dbc80f9bafc976"
+    },
+    "name": "Pellanda",
+    "language": "it",
+    "frequency": 50,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976602c15dbc80f9bafc979"
+    },
+    "language": "it",
+    "name": "Bianchetti",
+    "frequency": 45,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976602c15dbc80f9bafc97b"
+    },
+    "name": "Borello",
+    "language": "it",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976603115dbc80f9bafc97d"
+    },
+    "language": "it",
+    "name": "Carbone",
+    "frequency": 75,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976603115dbc80f9bafc980"
+    },
+    "name": "Mendini",
+    "language": "it",
+    "frequency": 60,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976603115dbc80f9bafc98a"
+    },
+    "name": "Villa",
+    "language": "it",
+    "frequency": 70,
+    "origin": "geographical"
+  },
+  {
+    "_id": {
+      "$oid": "6976603115dbc80f9bafc98d"
+    },
+    "name": "Muratori",
+    "language": "it",
+    "frequency": 55,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976603115dbc80f9bafc98f"
+    },
+    "language": "it",
+    "name": "Belli",
+    "frequency": 75,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976603115dbc80f9bafc992"
+    },
+    "name": "Rizzi",
+    "language": "it",
+    "frequency": 80,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976603515dbc80f9bafc9aa"
+    },
+    "name": "Baldini",
+    "language": "it",
+    "frequency": 14,
+    "origin": "occupational"
+  },
+  {
+    "_id": {
+      "$oid": "6976603515dbc80f9bafc9ad"
+    },
+    "name": "Marini",
+    "language": "it",
+    "frequency": 10,
+    "origin": "patronymic"
+  },
+  {
+    "_id": {
+      "$oid": "6976603515dbc80f9bafc9b1"
+    },
+    "name": "Stella",
+    "language": "it",
+    "frequency": 4,
+    "origin": "modern"
+  }
+]

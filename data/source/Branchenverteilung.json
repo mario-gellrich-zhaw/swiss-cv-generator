@@ -1,0 +1,94 @@
+{
+  "titel": "Daten zur Schweizer Arbeitsgesellschaft und Demografie (ca. 2023/2024)",
+  "quelle_basis": "Bundesamt für Statistik (BFS), NOGA-2008-Klassifikation",
+  "arbeitsgesellschaft_branchenverteilung": {
+    "hinweis": "Die Zuordnung basiert auf einer Näherung der NOGA-Hauptgruppen zu den spezifizierten Kategorien. Summe kann aufgrund von Rundungsdifferenzen und nicht aufgeführten Kleinstbranchen leicht von 100% abweichen.",
+    "daten_in_prozent": [
+      {
+        "branche": "Wirtschaft, Verwaltung, Tourismus",
+        "anteil_prozent": 18.0,
+        "noga_entsprechung": "Finanz/Versicherung, Unternehmensdienstleistungen, Öffentliche Verwaltung, Tourismus"
+      },
+      {
+        "branche": "Gesundheit",
+        "anteil_prozent": 10.2,
+        "noga_entsprechung": "Gesundheitswesen"
+      },
+      {
+        "branche": "Bildung, Soziales",
+        "anteil_prozent": 7.7,
+        "noga_entsprechung": "Erziehung/Unterricht, Sozialwesen"
+      },
+      {
+        "branche": "Metall, Maschinen, Uhren",
+        "anteil_prozent": 5.4,
+        "noga_entsprechung": "Herstellung von Metallerzeugnissen, Maschinenbau, Uhren"
+      },
+      {
+        "branche": "Gastgewerbe, Hotellerie",
+        "anteil_prozent": 4.7,
+        "noga_entsprechung": "Beherbergung und Gastronomie"
+      },
+      {
+        "branche": "Bau",
+        "anteil_prozent": 4.7,
+        "noga_entsprechung": "Baugewerbe"
+      },
+      {
+        "branche": "Verkauf, Einkauf",
+        "anteil_prozent": 4.5,
+        "noga_entsprechung": "Detailhandel, Grosshandel"
+      },
+      {
+        "branche": "Verkehr, Logistik, Sicherheit",
+        "anteil_prozent": 3.3,
+        "noga_entsprechung": "Verkehr, Lagerei, Sicherheitsdienstleistungen"
+      },
+      {
+        "branche": "Informatik",
+        "anteil_prozent": 2.2,
+        "noga_entsprechung": "Informationstechnologie-Dienstleistungen"
+      },
+      {
+        "branche": "Elektrotechnik",
+        "anteil_prozent": 1.0,
+        "noga_entsprechung": "Herstellung von elektrischen Ausrüstungen"
+      },
+      {
+        "branche": "Chemie, Physik",
+        "anteil_prozent": 0.8,
+        "noga_entsprechung": "Herstellung von chemischen/pharmazeutischen Produkten"
+      },
+      {
+        "branche": "Nahrung",
+        "anteil_prozent": 0.7,
+        "noga_entsprechung": "Herstellung von Nahrungs- und Futtermitteln"
+      },
+      {
+        "branche": "Kultur, Medien",
+        "anteil_prozent": 0.7,
+        "noga_entsprechung": "Kunst, Unterhaltung und Erholung"
+      },
+      {
+        "branche": "Planung, Konstruktion",
+        "anteil_prozent": 0.6,
+        "noga_entsprechung": "Architektur- und Ingenieurbüros"
+      },
+      {
+        "branche": "Natur",
+        "anteil_prozent": 0.5,
+        "noga_entsprechung": "Landwirtschaft, Fischerei, Forstwirtschaft (Primärsektor)"
+      },
+      {
+        "branche": "Druck",
+        "anteil_prozent": 0.2,
+        "noga_entsprechung": "Druckerei"
+      },
+      {
+        "branche": "Übrige/Nicht separat erfasst",
+        "anteil_prozent": 34.7,
+        "noga_entsprechung": "Beinhaltet kleinere Sektoren wie Textilien, Holz, Fahrzeuge, Gebäudetechnik etc."
+      }
+    ]
+  }
+}

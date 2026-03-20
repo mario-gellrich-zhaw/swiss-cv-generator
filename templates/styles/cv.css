@@ -1,0 +1,10 @@
+﻿body { font-family: "DejaVu Sans", Arial, sans-serif; margin: 18mm; color: #222; }
+.header h1 { font-size: 20pt; margin: 0 0 4px 0; }
+.contact { font-size: 9pt; color: #444; margin-bottom: 8px; }
+.container { display: flex; flex-direction: column; gap: 8px; }
+.summary p { font-size: 10pt; margin: 0 0 6px 0; }
+.experience .exp { margin-bottom: 6px; }
+.experience .title { font-size: 10pt; }
+.experience .desc { font-size: 9pt; color: #333; }
+.skills { font-size: 9pt; }
+.footer { font-size: 8pt; color: #888; margin-top: 12px; }

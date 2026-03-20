@@ -1,0 +1,86 @@
+{
+  "demographic_data": {
+    "titel": "Detaillierte Altersstruktur der Schweizer Bevölkerung nach Geschlecht (ca. 2024)",
+    "quelle_basis": "Bundesamt für Statistik (BFS), Ständige Wohnbevölkerung",
+    "altersstruktur_detailliert": [
+      {
+        "altersgruppe": "18-25 Jahre",
+        "beschreibung": "Junge Erwachsene beim Übergang ins Berufsleben.",
+        "daten": [
+          {
+            "geschlecht": "Männer",
+            "anzahl_personen_ca": 355000,
+            "anteil_gesamt_prozent_ca": 3.9
+          },
+          {
+            "geschlecht": "Frauen",
+            "anzahl_personen_ca": 338000,
+            "anteil_gesamt_prozent_ca": 3.7
+          }
+        ],
+        "total_personen_ca": 693000,
+        "total_anteil_prozent_ca": 7.6
+      },
+      {
+        "altersgruppe": "26-40 Jahre",
+        "beschreibung": "Kern des jüngeren Erwerbspersonenpotenzials, Phase der Familiengründung.",
+        "daten": [
+          {
+            "geschlecht": "Männer",
+            "anzahl_personen_ca": 850000,
+            "anteil_gesamt_prozent_ca": 9.3
+          },
+          {
+            "geschlecht": "Frauen",
+            "anzahl_personen_ca": 835000,
+            "anteil_gesamt_prozent_ca": 9.2
+          }
+        ],
+        "total_personen_ca": 1685000,
+        "total_anteil_prozent_ca": 18.5
+      },
+      {
+        "altersgruppe": "41-65 Jahre",
+        "beschreibung": "Älteres, erfahrenes Erwerbspersonenpotenzial.",
+        "daten": [
+          {
+            "geschlecht": "Männer",
+            "anzahl_personen_ca": 1400000,
+            "anteil_gesamt_prozent_ca": 15.4
+          },
+          {
+            "geschlecht": "Frauen",
+            "anzahl_personen_ca": 1420000,
+            "anteil_gesamt_prozent_ca": 15.6
+          }
+        ],
+        "total_personen_ca": 2820000,
+        "total_anteil_prozent_ca": 31.0
+      }
+    ],
+    "zusatzinformation": {
+      "gesamtbevoelkerung_ca": "9.1 Millionen",
+      "gesamt_erwerbspotenzial_18_bis_65_prozent": "ca. 57.1 %"
+    }
+  },
+  "branch_distribution": {
+    "Wirtschaft, Verwaltung, Tourismus": 18.0,
+    "Gesundheit": 10.2,
+    "Bildung, Soziales": 7.7,
+    "Metall, Maschinen, Uhren": 5.4,
+    "Gastgewerbe, Hotellerie": 4.7,
+    "Bau": 4.7,
+    "Verkauf, Einkauf": 4.5,
+    "Verkehr, Logistik, Sicherheit": 3.3,
+    "Informatik": 2.2,
+    "Elektrotechnik": 1.0,
+    "Chemie, Physik": 0.8,
+    "Nahrung": 0.7,
+    "Kultur, Medien": 0.7,
+    "Planung, Konstruktion": 0.6,
+    "Natur": 0.5,
+    "Druck": 0.2,
+    "Übrige/Nicht separat erfasst": 34.7
+  },
+  "source": "mario_daten/Bevölkerungsdaten.json, mario_daten/Branchenverteilung.json"
+}

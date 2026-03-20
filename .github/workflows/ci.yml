@@ -1,0 +1,24 @@
+﻿name: CI
+
+on:
+  push:
+    branches: [ main, feat/*, feat/** ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install -r requirements.txt || pip install pydantic ftfy reportlab
+      - name: Run tests
+        run: pytest -q
+      - name: Generate smoke personas
+        run: python -m src.mvp_cli --count 5 --format both --output-dir demo_outputs
+      - name: List outputs
+        run: ls -la demo_outputs || true

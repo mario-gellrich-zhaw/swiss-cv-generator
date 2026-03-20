@@ -1,0 +1,1 @@
+﻿{age} Jahre alt, wohnhaft in {canton}. {experience_years} Jahre Berufserfahrung als {occupation}. Kurzprofil: Erfahrene:r Fachkraft mit Fokus auf Projektarbeit und Teamarbeit.

@@ -1,0 +1,470 @@
+[
+  {
+    "_id": {
+      "$oid": "6976595215dbc80f9baf9f02"
+    },
+    "code": "AG",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.163000"
+    },
+    "language_de": 0.86,
+    "language_fr": 0.05,
+    "language_it": 0.04,
+    "major_city": "Aarau",
+    "name_de": "Aargau",
+    "name_fr": "Argovie",
+    "name_it": "Argovia",
+    "population": 685000,
+    "workforce": 342500
+  },
+  {
+    "_id": {
+      "$oid": "6976595215dbc80f9baf9f04"
+    },
+    "code": "AI",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.168000"
+    },
+    "language_de": 0.98,
+    "language_fr": 0.01,
+    "language_it": 0.01,
+    "major_city": "Appenzell",
+    "name_de": "Appenzell Innerrhoden",
+    "name_fr": "Appenzell Rhodes-Intérieures",
+    "name_it": "Appenzello Interno",
+    "population": 16000,
+    "workforce": 8000
+  },
+  {
+    "_id": {
+      "$oid": "6976595215dbc80f9baf9f06"
+    },
+    "code": "AR",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.168000"
+    },
+    "language_de": 0.95,
+    "language_fr": 0.01,
+    "language_it": 0.01,
+    "major_city": "Herisau",
+    "name_de": "Appenzell Ausserrhoden",
+    "name_fr": "Appenzell Rhodes-Extérieures",
+    "name_it": "Appenzello Esterno",
+    "population": 55000,
+    "workforce": 27500
+  },
+  {
+    "_id": {
+      "$oid": "6976595215dbc80f9baf9f08"
+    },
+    "code": "BE",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.162000"
+    },
+    "language_de": 0.63,
+    "language_fr": 0.23,
+    "language_it": 0.03,
+    "major_city": "Bern",
+    "name_de": "Bern",
+    "name_fr": "Berne",
+    "name_it": "Berna",
+    "population": 1040000,
+    "workforce": 520000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f0a"
+    },
+    "code": "BL",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.166000"
+    },
+    "language_de": 0.89,
+    "language_fr": 0.03,
+    "language_it": 0.03,
+    "major_city": "Liestal",
+    "name_de": "Basel-Landschaft",
+    "name_fr": "Bâle-Campagne",
+    "name_it": "Basilea Campagna",
+    "population": 290000,
+    "workforce": 145000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f0c"
+    },
+    "code": "BS",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.166000"
+    },
+    "language_de": 0.75,
+    "language_fr": 0.09,
+    "language_it": 0.04,
+    "major_city": "Basel",
+    "name_de": "Basel-Stadt",
+    "name_fr": "Bâle-Ville",
+    "name_it": "Basilea Città",
+    "population": 200000,
+    "workforce": 100000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f0e"
+    },
+    "code": "FR",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.167000"
+    },
+    "language_de": 0.29,
+    "language_fr": 0.68,
+    "language_it": 0.01,
+    "major_city": "Fribourg",
+    "name_de": "Freiburg",
+    "name_fr": "Fribourg",
+    "name_it": "Friburgo",
+    "population": 320000,
+    "workforce": 160000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f10"
+    },
+    "code": "GE",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.170000"
+    },
+    "language_de": 0.1,
+    "language_fr": 0.85,
+    "language_it": 0.04,
+    "major_city": "Genève",
+    "name_de": "Genf",
+    "name_fr": "Genève",
+    "name_it": "Ginevra",
+    "population": 500000,
+    "workforce": 250000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f12"
+    },
+    "code": "GL",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.169000"
+    },
+    "language_de": 0.93,
+    "language_fr": 0.02,
+    "language_it": 0.02,
+    "major_city": "Glarus",
+    "name_de": "Glarus",
+    "name_fr": "Glaris",
+    "name_it": "Glarona",
+    "population": 40000,
+    "workforce": 20000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f14"
+    },
+    "code": "GR",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.164000"
+    },
+    "language_de": 0.45,
+    "language_fr": 0.01,
+    "language_it": 0.15,
+    "major_city": "Chur",
+    "name_de": "Graubünden",
+    "name_fr": "Grisons",
+    "name_it": "Grigioni",
+    "population": 200000,
+    "workforce": 100000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f16"
+    },
+    "code": "JU",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.170000"
+    },
+    "language_de": 0.1,
+    "language_fr": 0.88,
+    "language_it": 0.01,
+    "major_city": "Delémont",
+    "name_de": "Jura",
+    "name_fr": "Jura",
+    "name_it": "Giura",
+    "population": 73000,
+    "workforce": 36500
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f18"
+    },
+    "code": "LU",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.164000"
+    },
+    "language_de": 0.89,
+    "language_fr": 0.03,
+    "language_it": 0.03,
+    "major_city": "Luzern",
+    "name_de": "Luzern",
+    "name_fr": "Lucerne",
+    "name_it": "Lucerna",
+    "population": 410000,
+    "workforce": 205000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f1a"
+    },
+    "code": "NE",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.169000"
+    },
+    "language_de": 0.2,
+    "language_fr": 0.76,
+    "language_it": 0.02,
+    "major_city": "Neuchâtel",
+    "name_de": "Neuenburg",
+    "name_fr": "Neuchâtel",
+    "name_it": "Neuchâtel",
+    "population": 180000,
+    "workforce": 90000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f1c"
+    },
+    "code": "NW",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.170000"
+    },
+    "language_de": 0.92,
+    "language_fr": 0.03,
+    "language_it": 0.02,
+    "major_city": "Stans",
+    "name_de": "Nidwalden",
+    "name_fr": "Nidwald",
+    "name_it": "Nidvaldo",
+    "population": 43000,
+    "workforce": 21500
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f1e"
+    },
+    "code": "OW",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.171000"
+    },
+    "language_de": 0.93,
+    "language_fr": 0.02,
+    "language_it": 0.02,
+    "major_city": "Sarnen",
+    "name_de": "Obwalden",
+    "name_fr": "Obwald",
+    "name_it": "Obvaldo",
+    "population": 38000,
+    "workforce": 19000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f20"
+    },
+    "code": "SG",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.163000"
+    },
+    "language_de": 0.91,
+    "language_fr": 0.03,
+    "language_it": 0.02,
+    "major_city": "St. Gallen",
+    "name_de": "St. Gallen",
+    "name_fr": "Saint-Gall",
+    "name_it": "San Gallo",
+    "population": 510000,
+    "workforce": 255000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f22"
+    },
+    "code": "SH",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.167000"
+    },
+    "language_de": 0.91,
+    "language_fr": 0.03,
+    "language_it": 0.02,
+    "major_city": "Schaffhausen",
+    "name_de": "Schaffhausen",
+    "name_fr": "Schaffhouse",
+    "name_it": "Sciaffusa",
+    "population": 81000,
+    "workforce": 40500
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f24"
+    },
+    "code": "SO",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.167000"
+    },
+    "language_de": 0.88,
+    "language_fr": 0.05,
+    "language_it": 0.03,
+    "major_city": "Solothurn",
+    "name_de": "Solothurn",
+    "name_fr": "Soleure",
+    "name_it": "Soletta",
+    "population": 270000,
+    "workforce": 135000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f26"
+    },
+    "code": "SZ",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.171000"
+    },
+    "language_de": 0.92,
+    "language_fr": 0.02,
+    "language_it": 0.03,
+    "major_city": "Schwyz",
+    "name_de": "Schwyz",
+    "name_fr": "Schwytz",
+    "name_it": "Svitto",
+    "population": 160000,
+    "workforce": 80000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f28"
+    },
+    "code": "TG",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.172000"
+    },
+    "language_de": 0.91,
+    "language_fr": 0.02,
+    "language_it": 0.03,
+    "major_city": "Frauenfeld",
+    "name_de": "Thurgau",
+    "name_fr": "Thurgovie",
+    "name_it": "Turgovia",
+    "population": 280000,
+    "workforce": 140000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f2a"
+    },
+    "code": "TI",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.165000"
+    },
+    "language_de": 0.1,
+    "language_fr": 0.04,
+    "language_it": 0.84,
+    "major_city": "Lugano",
+    "name_de": "Tessin",
+    "name_fr": "Tessin",
+    "name_it": "Ticino",
+    "population": 350000,
+    "workforce": 175000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f2c"
+    },
+    "code": "UR",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.172000"
+    },
+    "language_de": 0.91,
+    "language_fr": 0.02,
+    "language_it": 0.03,
+    "major_city": "Altdorf",
+    "name_de": "Uri",
+    "name_fr": "Uri",
+    "name_it": "Uri",
+    "population": 36000,
+    "workforce": 18000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f2e"
+    },
+    "code": "VD",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.162000"
+    },
+    "language_de": 0.2,
+    "language_fr": 0.75,
+    "language_it": 0.02,
+    "major_city": "Lausanne",
+    "name_de": "Waadt",
+    "name_fr": "Vaud",
+    "name_it": "Vaud",
+    "population": 800000,
+    "workforce": 400000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f30"
+    },
+    "code": "VS",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.165000"
+    },
+    "language_de": 0.28,
+    "language_fr": 0.62,
+    "language_it": 0.02,
+    "major_city": "Sion",
+    "name_de": "Wallis",
+    "name_fr": "Valais",
+    "name_it": "Vallese",
+    "population": 340000,
+    "workforce": 170000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f32"
+    },
+    "code": "ZG",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.169000"
+    },
+    "language_de": 0.87,
+    "language_fr": 0.04,
+    "language_it": 0.05,
+    "major_city": "Zug",
+    "name_de": "Zug",
+    "name_fr": "Zoug",
+    "name_it": "Zugo",
+    "population": 130000,
+    "workforce": 65000
+  },
+  {
+    "_id": {
+      "$oid": "6976595315dbc80f9baf9f34"
+    },
+    "code": "ZH",
+    "created_at": {
+      "$date": "2026-01-25T18:23:01.161000"
+    },
+    "language_de": 0.64,
+    "language_fr": 0.04,
+    "language_it": 0.07,
+    "major_city": "Zürich",
+    "name_de": "Zürich",
+    "name_fr": "Zurich",
+    "name_it": "Zurigo",
+    "population": 1550000,
+    "workforce": 780000
+  }
+]

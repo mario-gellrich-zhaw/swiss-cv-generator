@@ -1,0 +1,1 @@
+﻿{age} anni, residente a {canton}. {experience_years} anni di esperienza come {occupation}. Profilo: professionista esperto, orientato ai progetti e al lavoro di squadra.

@@ -1,0 +1,5 @@
+﻿[
+  {"code":"ZH","name":"Zürich","population":1540000,"workforce":820000,"language_distribution":{"de":0.95,"fr":0.02,"it":0.01}},
+  {"code":"BE","name":"Bern","population":1030000,"workforce":450000,"language_distribution":{"de":0.90,"fr":0.08}},
+  {"code":"VD","name":"Vaud","population":800000,"workforce":380000,"language_distribution":{"fr":0.85,"de":0.10}}
+]

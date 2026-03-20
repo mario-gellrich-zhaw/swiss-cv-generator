@@ -1,0 +1,77 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lebenslauf - {{ full_name }}</title>
+  <style>
+    @page { size: A4; margin: 14mm; }
+    body {
+      font-family: "Arial", "Segoe UI", sans-serif;
+      font-size: 10pt;
+      color: #111;
+      margin: 0;
+      line-height: 1.16;
+    }
+    header { margin-bottom: 6px; }
+    h1 { margin: 0; font-size: 15pt; }
+    .meta { color: #444; font-size: 9pt; margin-top: 3px; }
+    .container { display: flex; gap: 12px; margin-top: 8px; }
+    .left { width: 30%; min-width: 130px; }
+    .right { width: 70%; }
+    .box { border-top: 1px solid #e6e6e6; padding-top: 6px; margin-top: 8px; }
+    strong { display:block; margin-bottom:6px; font-size:10pt; }
+    ul { margin: 4px 0 0 18px; padding: 0; }
+    li { margin-bottom: 3px; font-size: 10pt; }
+    .box, section { page-break-inside: avoid; }
+    footer { font-size: 8.5pt; color:#666; text-align:center; margin-top:10px; }
+    p { margin: 6px 0; font-size: 10pt; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{ full_name }}</h1>
+    <div class="meta">{{ city }}, Kanton {{ canton }} • {{ language }} • {{ experience_years }} Jahre Erfahrung</div>
+    <div class="meta">Email: {{ email }} • Telefon: {{ phone }}</div>
+  </header>
+
+  <div class="container">
+    <aside class="left">
+      <section class="box">
+        <strong>Skills</strong>
+        <ul>
+          <li>Software-Entwicklung</li>
+          <li>Architektur</li>
+          <li>DevOps</li>
+        </ul>
+      </section>
+      <section class="box">
+        <strong>Sprachen</strong>
+        <ul>
+          <li>{{ language }}</li>
+          <li>Englisch</li>
+        </ul>
+      </section>
+    </aside>
+
+    <main class="right">
+      <section>
+        <strong>Profil</strong>
+        <p>{{ summary }}</p>
+      </section>
+
+      <section class="box">
+        <strong>Berufserfahrung</strong>
+        <p><strong>{{ current_role }}</strong> — Diverse Firmen<br/>{{ experience_years }} Jahre Erfahrung</p>
+      </section>
+
+      <section class="box">
+        <strong>Ausbildung</strong>
+        <p>Hochschule / Universität — Abschlussjahr: {{ birth_year + 24 }}</p>
+      </section>
+    </main>
+  </div>
+
+  <footer>Erzeugt mit Swiss CV Generator</footer>
+</body>
+</html>

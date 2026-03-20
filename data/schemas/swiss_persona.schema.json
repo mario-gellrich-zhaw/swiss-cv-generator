@@ -1,0 +1,189 @@
+{
+  "title": "SwissPersona",
+  "type": "object",
+  "properties": {
+    "id": {
+      "title": "Id",
+      "description": "Unique id / uuid",
+      "type": "string"
+    },
+    "first_name": {
+      "title": "First Name",
+      "type": "string"
+    },
+    "last_name": {
+      "title": "Last Name",
+      "type": "string"
+    },
+    "gender": {
+      "title": "Gender",
+      "description": "male/female/other/unknown",
+      "type": "string"
+    },
+    "canton": {
+      "title": "Canton",
+      "description": "Swiss canton code, e.g. ZH, GE",
+      "type": "string"
+    },
+    "language": {
+      "title": "Language",
+      "description": "de/fr/it/en - main language of persona",
+      "type": "string"
+    },
+    "age": {
+      "title": "Age",
+      "minimum": 16,
+      "maximum": 100,
+      "type": "integer"
+    },
+    "birth_year": {
+      "title": "Birth Year",
+      "type": "integer"
+    },
+    "years_experience": {
+      "title": "Years Experience",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "seniority": {
+      "title": "Seniority",
+      "description": "junior,middle,senior,lead",
+      "type": "string"
+    },
+    "industry": {
+      "title": "Industry",
+      "type": "string"
+    },
+    "current_title": {
+      "title": "Current Title",
+      "type": "string"
+    },
+    "email": {
+      "title": "Email",
+      "type": "string",
+      "format": "email"
+    },
+    "phone": {
+      "title": "Phone",
+      "type": "string"
+    },
+    "address": {
+      "title": "Address",
+      "type": "string"
+    },
+    "skills": {
+      "title": "Skills",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "languages_spoken": {
+      "title": "Languages Spoken",
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "education": {
+      "title": "Education",
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EducationEntry"
+      }
+    },
+    "experience": {
+      "title": "Experience",
+      "default": [],
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ExperienceEntry"
+      }
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    }
+  },
+  "required": [
+    "first_name",
+    "last_name",
+    "canton",
+    "language",
+    "age",
+    "years_experience"
+  ],
+  "definitions": {
+    "EducationEntry": {
+      "title": "EducationEntry",
+      "type": "object",
+      "properties": {
+        "institution": {
+          "title": "Institution",
+          "type": "string"
+        },
+        "degree": {
+          "title": "Degree",
+          "type": "string"
+        },
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "start_year": {
+          "title": "Start Year",
+          "type": "integer"
+        },
+        "end_year": {
+          "title": "End Year",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "institution"
+      ]
+    },
+    "ExperienceEntry": {
+      "title": "ExperienceEntry",
+      "type": "object",
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "company": {
+          "title": "Company",
+          "type": "string"
+        },
+        "canton": {
+          "title": "Canton",
+          "type": "string"
+        },
+        "start_year": {
+          "title": "Start Year",
+          "type": "integer"
+        },
+        "end_year": {
+          "title": "End Year",
+          "type": "integer"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "seniority": {
+          "title": "Seniority",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "company",
+        "start_year"
+      ]
+    }
+  }
+}
