@@ -27,6 +27,7 @@ from reportlab.pdfbase import pdfmetrics, ttfonts  # type: ignore
 from reportlab.platypus import (Flowable, Frame, FrameBreak,  # type: ignore
                                 Image, KeepTogether, PageTemplate, Paragraph,
                                 SimpleDocTemplate, Spacer, Table, TableStyle)
+from reportlab.platypus.doctemplate import LayoutError  # type: ignore
 
 # Font configuration
 FONT_DIR = os.path.join(os.getcwd(), "assets", "fonts")
@@ -433,8 +434,10 @@ def render_classic(cv_doc: Any, out_path: str):
     # Build document
     doc = SimpleDocTemplate(out_path, pagesize=A4, leftMargin=MARGIN, rightMargin=MARGIN,
                             topMargin=MARGIN, bottomMargin=MARGIN)
-    doc.build([main_table])
-    _cleanup_temp(temp_portrait)
+    try:
+        doc.build([main_table])
+    finally:
+        _cleanup_temp(temp_portrait)
 
 
 # =============================================================================
@@ -983,7 +986,29 @@ def render_cv_with_template(cv_doc: Any, out_path: str, template_name: str = "cl
         template_name = random.choice(list(RENDER_FUNCTIONS.keys()))
 
     render_func = RENDER_FUNCTIONS.get(template_name, render_classic)
-    render_func(cv_doc, out_path)
+
+    try:
+        render_func(cv_doc, out_path)
+        return
+    except LayoutError as e:
+        # Some layouts (especially table-heavy ones) can fail when content gets too long.
+        # Retry with templates that split content better across pages.
+        fallback_order = ["modern", "minimal", "timeline", "classic"]
+        fallback_templates = [t for t in fallback_order if t != template_name]
+
+        for fallback_template in fallback_templates:
+            try:
+                RENDER_FUNCTIONS[fallback_template](cv_doc, out_path)
+                print(
+                    f"Warning: Template '{template_name}' failed with layout overflow ({e}). "
+                    f"Rendered with fallback template '{fallback_template}'."
+                )
+                return
+            except LayoutError:
+                continue
+
+        # Re-raise the original error if all fallbacks fail.
+        raise
 
 
 def get_available_templates() -> Dict[str, str]:

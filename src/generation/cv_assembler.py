@@ -616,7 +616,7 @@ def generate_varied_summary(
         description = occupation_doc.get("description", "")[:300]
 
     prompts = {
-        "de": f"""Erstelle einen professionellen CV-Zusammenfassungstext (2-3 Sätze) für:
+        "de": f"""Erstelle einen professionellen CV-Zusammenfassungstext (5-6 Sätze) für:
 
 Name: {name}
 Alter: {age} Jahre
@@ -635,11 +635,12 @@ KRITISCHE ANFORDERUNGEN:
 - Variiere Ton: verwende "{tone}" oder ähnlich
 - KEINE AI-Buzzwords: "professioneller Ansatz", "geschätzte Figur"
 - Zeige, erzähle nicht: konkrete Details statt generischer Phrasen
-- 2-3 Sätze, max 200 Wörter
+- 5-6 Sätze, max 350 Wörter
 - Schweizer CV-Stil
+- Struktur: Berufserfahrung & Expertise → Kernskills → Arbeitsstil/Stärken → Branchenkompetenz → Motivation/Ziel
 
 Nur den Text zurückgeben, keine Markdown, keine Erklärung.""",
-        "fr": f"""Créez un texte de résumé professionnel de CV (2-3 phrases) pour:
+        "fr": f"""Créez un texte de résumé professionnel de CV (5-6 phrases) pour:
 
 Nom: {name}
 Âge: {age} ans
@@ -658,10 +659,11 @@ EXIGENCES:
 - Ton varié
 - Pas de mots-clés AI
 - Détails concrets
-- 2-3 phrases, max 200 mots
+- 5-6 phrases, max 350 mots
+- Structure: expérience & expertise → compétences clés → style de travail → compétences sectorielles → motivation
 
 Retournez uniquement le texte.""",
-        "it": f"""Crea un testo di riepilogo professionale (2-3 frasi) per:
+        "it": f"""Crea un testo di riepilogo professionale (5-6 frasi) per:
 
 Nome: {name}
 Età: {age} anni
@@ -679,7 +681,8 @@ REQUISITI:
 - Contesto settoriale
 - Ton variato
 - Dettagli concreti
-- 2-3 frasi, max 200 parole
+- 5-6 frasi, max 350 parole
+- Struttura: esperienza & competenze → skills chiave → stile di lavoro → competenza settoriale → motivazione
 
 Restituisci solo il testo."""
     }
@@ -703,7 +706,7 @@ Restituisci solo il testo."""
                 model=settings.openai_model_mini,
                 messages=messages,
                 temperature=settings.ai_temperature_creative,
-                max_tokens=250,
+                max_tokens=450,
                 timeout=OPENAI_REQUEST_TIMEOUT_SECONDS
             )
             summary = response.choices[0].message.content.strip()
@@ -922,7 +925,7 @@ def generate_summary(
 
     # Language-specific prompts
     prompts = {
-        "de": f"""Erstelle einen professionellen CV-Zusammenfassungstext (2-3 Sätze) für:
+        "de": f"""Erstelle einen professionellen CV-Zusammenfassungstext (5-6 Sätze) für:
 
 Name: {name}
 Alter: {age} Jahre
@@ -936,11 +939,12 @@ Berufsbeschreibung: {description[:500]}
 Anforderungen:
 - Professionell und überzeugend
 - Zeigt Erfahrung und Kompetenz
-- 2-3 Sätze, max 200 Wörter
+- 5-6 Sätze, max 350 Wörter
 - Schweizer CV-Stil
+- Struktur: Berufserfahrung & Expertise → Kernskills → Arbeitsstil/Stärken → Branchenkompetenz → Motivation/Ziel
 
 Nur den Text zurückgeben, keine Markdown, keine Erklärung.""",
-        "fr": f"""Créez un texte de résumé professionnel de CV (2-3 phrases) pour:
+        "fr": f"""Créez un texte de résumé professionnel de CV (5-6 phrases) pour:
 
 Nom: {name}
 Âge: {age} ans
@@ -954,12 +958,13 @@ Description professionnelle: {description[:500]}
 Exigences:
 - Professionnel et convaincant
 - Montre l'expérience et les compétences
-- 2-3 phrases, max 200 mots
+- 5-6 phrases, max 350 mots
 - Style CV suisse
- - Si la description ou les données ne sont pas en français, TRADUIS tout en français
+- Structure: expérience & expertise → compétences clés → style de travail → compétences sectorielles → motivation
+- Si la description ou les données ne sont pas en français, TRADUIS tout en français
 
 Retournez uniquement le texte, pas de markdown, pas d'explication.""",
-        "it": f"""Crea un testo di riepilogo professionale del CV (2-3 frasi) per:
+        "it": f"""Crea un testo di riepilogo professionale del CV (5-6 frasi) per:
 
 Nome: {name}
 Età: {age} anni
@@ -973,9 +978,10 @@ Descrizione professionale: {description[:500]}
 Requisiti:
 - Professionale e convincente
 - Mostra esperienza e competenze
-- 2-3 frasi, max 200 parole
+- 5-6 frasi, max 350 parole
 - Stile CV svizzero
- - Se la descrizione o i dati non sono in italiano, TRADUCI tutto in italiano
+- Struttura: esperienza & competenze → skills chiave → stile di lavoro → competenza settoriale → motivazione
+- Se la descrizione o i dati non sono in italiano, TRADUCI tutto in italiano
 
 Restituisci solo il testo, nessun markdown, nessuna spiegazione."""
     }
@@ -1000,7 +1006,7 @@ Restituisci solo il testo, nessun markdown, nessuna spiegazione."""
                 model=settings.openai_model_mini,
                 messages=messages,
                 temperature=settings.ai_temperature_creative,
-                max_tokens=200,
+                max_tokens=450,
                 timeout=OPENAI_REQUEST_TIMEOUT_SECONDS
             )
             summary = response.choices[0].message.content.strip()
@@ -1025,11 +1031,46 @@ def generate_fallback_summary(persona: Dict[str, Any], language: str = "de") -> 
     career_level = persona.get("career_level", "mid")
     occupation_title = persona.get(
         "occupation", persona.get("current_title", ""))
+    industry = persona.get("industry", "")
+    canton = persona.get("canton", "")
+    age = persona.get("age", 0)
+
+    career_level_labels = {
+        "de": {"junior": "Junior", "mid": "erfahrene:r", "senior": "senior", "lead": "leitende:r", "executive": "führende:r"},
+        "fr": {"junior": "junior", "mid": "expérimenté(e)", "senior": "senior", "lead": "dirigeant(e)", "executive": "cadre"},
+        "it": {"junior": "junior", "mid": "esperto/a", "senior": "senior", "lead": "dirigente", "executive": "dirigente senior"},
+    }
+    level_label = career_level_labels.get(
+        language, career_level_labels["de"]).get(career_level, career_level)
 
     summaries = {
-        "de": f"{name} ist ein {career_level}-level {occupation_title.lower()} mit {years_exp} Jahren Berufserfahrung. Spezialisiert auf {persona.get('industry', 'verschiedene Bereiche')} mit Fokus auf Qualität und Effizienz.",
-        "fr": f"{name} est un {occupation_title.lower()} de niveau {career_level} avec {years_exp} ans d'expérience professionnelle. Spécialisé dans {persona.get('industry', 'divers domaines')} avec un accent sur la qualité et l'efficacité.",
-        "it": f"{name} è un {occupation_title.lower()} di livello {career_level} con {years_exp} anni di esperienza professionale. Specializzato in {persona.get('industry', 'vari settori')} con focus su qualità ed efficienza."
+        "de": (
+            f"{name} ist ein:e {level_label} {occupation_title} mit {years_exp} Jahren Berufserfahrung"
+            + (f" in der Branche {industry}" if industry else "") + ". "
+            f"Im Laufe ihrer/seiner Karriere hat {name} fundierte Fachkenntnisse aufgebaut und sich kontinuierlich weiterentwickelt. "
+            f"Die Stärken liegen in der eigenverantwortlichen Arbeitsweise, der lösungsorientierten Denkweise sowie der Fähigkeit, im Team und mit verschiedenen Anspruchsgruppen effektiv zusammenzuarbeiten. "
+            + (f"Als in {canton} ansässige Fachkraft verfügt {name} über ein gut vernetztes berufliches Umfeld. " if canton else "")
+            + f"Die bisherige Berufsbiographie zeigt eine klare Entwicklungslinie mit zunehmendem Verantwortungsbereich. "
+            f"Mit {years_exp} Jahren Praxiserfahrung bringt {name} das fachliche und persönliche Rüstzeug mit, um neue Herausforderungen zielgerichtet anzugehen."
+        ),
+        "fr": (
+            f"{name} est un(e) professionnel(le) {level_label} en tant que {occupation_title} avec {years_exp} ans d'expérience"
+            + (f" dans le secteur {industry}" if industry else "") + ". "
+            f"Au fil de sa carrière, {name} a développé une solide expertise et évolué en permanence dans son domaine. "
+            f"Ses points forts résident dans son autonomie, son esprit orienté solutions et sa capacité à collaborer efficacement en équipe et avec différentes parties prenantes. "
+            + (f"Basé(e) dans le canton de {canton}, {name} bénéficie d'un réseau professionnel bien établi. " if canton else "")
+            + f"Son parcours professionnel témoigne d'une progression constante avec des responsabilités croissantes. "
+            f"Avec {years_exp} ans d'expérience pratique, {name} dispose des compétences techniques et personnelles pour relever de nouveaux défis."
+        ),
+        "it": (
+            f"{name} è un/a professionista {level_label} come {occupation_title} con {years_exp} anni di esperienza"
+            + (f" nel settore {industry}" if industry else "") + ". "
+            f"Nel corso della sua carriera, {name} ha sviluppato solide competenze e si è continuamente aggiornato/a nel proprio campo. "
+            f"I punti di forza sono l'autonomia lavorativa, il pensiero orientato alle soluzioni e la capacità di collaborare efficacemente in team e con diversi interlocutori. "
+            + (f"Con sede nel cantone di {canton}, {name} dispone di una rete professionale ben consolidata. " if canton else "")
+            + f"Il percorso professionale dimostra una chiara progressione con responsabilità crescenti. "
+            f"Con {years_exp} anni di esperienza pratica, {name} è pronto/a ad affrontare nuove sfide con competenza e determinazione."
+        ),
     }
 
     return summaries.get(language, summaries["de"])
